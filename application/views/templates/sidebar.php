@@ -76,6 +76,15 @@ $role = (int) $this->user['id_role']; // 1=admin, 2=guru, 3=siswa
 
     <hr class="sidebar-divider">
     <div class="sidebar-heading">Pengaturan</div>
+    <?php if ($role === 1): ?>
+<li class="nav-item <?= ($this->uri->segment(1)=='backup')?'active':'' ?>">
+    <a class="nav-link" href="<?= site_url('backup') ?>">
+        <i class="fas fa-fw fa-database"></i>
+        <span>Backup & Restore</span>
+    </a>
+</li>
+<?php endif; ?>
+
 
     <li class="nav-item">
         <a class="nav-link" href="<?= site_url('pengguna') ?>">
