@@ -62,6 +62,7 @@ $isbn = ($isbn === '') ? null : $isbn;
         'id_kategori' => $this->input->post('id_kategori', TRUE),
         'id_rak'      => $this->input->post('id_rak', TRUE),
         'stok'        => $this->input->post('stok', TRUE),
+        'kelas'       => $this->input->post('kelas', TRUE) ?: 'Umum',
     ];
 
     // ===== UPLOAD COVER =====
@@ -145,6 +146,7 @@ $isbn = ($isbn === '') ? null : $isbn;
         'id_kategori' => $this->input->post('id_kategori', TRUE),
         'id_rak'      => $this->input->post('id_rak', TRUE),
         'stok'        => $this->input->post('stok', TRUE),
+        'kelas'       => $this->input->post('kelas', TRUE) ?: 'Umum',
     ];
 
     // ===== UPLOAD COVER BARU =====
@@ -282,6 +284,7 @@ $isbn = ($isbn === '') ? null : $isbn;
             'id_kategori' => !empty($row['F']) ? $row['F'] : $default_kategori,
             'id_rak'      => !empty($row['G']) ? $row['G'] : $default_rak,
             'stok'        => trim($row['H']),
+            'kelas'       => $kelas,
             'created_at'  => date('Y-m-d H:i:s')
         ];
     }

@@ -70,6 +70,19 @@
                             <?php endforeach; ?>
                         </select>
                     </div>
+                        <div class="form-group">
+                        <label>Kelas</label>
+                        <select name="kelas" class="form-control" required>
+                            <option value="">-- Pilih Kelas --</option>
+                            <option value="X">X</option>
+                            <option value="XI">XI</option>
+                            <option value="XII">XII</option>
+                            <option value="Umum">Umum</option>
+                        </select>
+                        <small class="text-muted">
+                            Pilih <strong>Umum</strong> jika buku bisa dipinjam semua kelas
+                        </small>
+                    </div>
 
                     <div class="form-group">
                         <label>Rak</label>
@@ -113,8 +126,9 @@
 
                     <div class="alert alert-info">
     <strong>Format Excel wajib:</strong><br>
-    isbn | judul | penulis | penerbit | tahun | id_kategori | id_rak | stok
+    isbn | judul | penulis | penerbit | tahun | id_kategori | id_rak | stok | kelas
 </div>
+
 
 
                     <div class="form-group">
@@ -134,6 +148,16 @@
                             <?php endforeach; ?>
                         </select>
                     </div>
+                            <div class="form-group">
+                            <label>Kelas (default jika kosong)</label>
+                            <select name="default_kelas" class="form-control">
+                                <option value="">-- Dari Excel --</option>
+                                <option value="X">X</option>
+                                <option value="XI">XI</option>
+                                <option value="XII">XII</option>
+                                <option value="Umum">Umum</option>
+                            </select>
+                        </div>
 
                     <div class="form-group">
                         <label>Rak (default jika kosong)</label>

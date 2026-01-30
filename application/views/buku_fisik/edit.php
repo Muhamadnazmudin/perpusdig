@@ -78,6 +78,20 @@
                     <?php endforeach ?>
                 </select>
             </div>
+<!-- Kelas -->
+<div class="form-group">
+    <label>Kelas</label>
+    <select name="kelas" class="form-control" required>
+        <option value="">-- Pilih Kelas --</option>
+        <option value="X"   <?= $buku->kelas=='X'   ? 'selected' : '' ?>>X</option>
+        <option value="XI"  <?= $buku->kelas=='XI'  ? 'selected' : '' ?>>XI</option>
+        <option value="XII" <?= $buku->kelas=='XII' ? 'selected' : '' ?>>XII</option>
+        <option value="Umum"<?= $buku->kelas=='Umum'? 'selected' : '' ?>>Umum</option>
+    </select>
+    <small class="text-muted">
+        Pilih <strong>Umum</strong> jika buku dapat dipinjam semua kelas
+    </small>
+</div>
 
             <!-- Stok -->
             <div class="form-group">
