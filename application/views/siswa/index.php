@@ -8,11 +8,22 @@
         </div>
     <?php endif ?>
 
-    <div class="card shadow mb-4">
+    <div class="card shadow-sm mb-4">
+
+    <div class="card-header">
+        <a class="text-dark d-flex justify-content-between align-items-center"
+           data-toggle="collapse"
+           href="#tambahSiswa">
+            <strong><i class="fas fa-user-plus"></i> Tambah & Import Siswa</strong>
+            <i class="fas fa-chevron-down"></i>
+        </a>
+    </div>
+
+    <div class="collapse" id="tambahSiswa">
         <div class="card-body">
 
             <!-- ================= TAMBAH SISWA ================= -->
-            <form action="<?= site_url('siswa/tambah') ?>" method="post" class="mb-3">
+            <form action="<?= site_url('siswa/tambah') ?>" method="post" class="mb-4">
                 <input type="hidden"
                        name="<?= $this->security->get_csrf_token_name(); ?>"
                        value="<?= $this->security->get_csrf_hash(); ?>">
@@ -29,7 +40,7 @@
                             <option value="">- Kelas -</option>
                             <?php foreach($kelas as $k): ?>
                                 <option value="<?= $k->id_kelas ?>">
-                                    <?= htmlspecialchars($k->nama_kelas) ?>
+                                    <?= $k->nama_kelas ?>
                                 </option>
                             <?php endforeach ?>
                         </select>
@@ -39,7 +50,7 @@
                             <option value="">- Jurusan -</option>
                             <?php foreach($jurusan as $j): ?>
                                 <option value="<?= $j->id_jurusan ?>">
-                                    <?= htmlspecialchars($j->nama_jurusan) ?>
+                                    <?= $j->nama_jurusan ?>
                                 </option>
                             <?php endforeach ?>
                         </select>
@@ -52,14 +63,16 @@
                 </div>
             </form>
 
+            <hr>
+
             <!-- ================= IMPORT SISWA ================= -->
-            <form action="<?= site_url('siswa/import') ?>" method="post" enctype="multipart/form-data" class="mb-4">
-                <div class="form-row">
-                    <div class="col-md-4">
-                        <input type="file" name="file" class="form-control" accept=".xls,.xlsx,.csv" required>
+            <form action="<?= site_url('siswa/import') ?>" method="post" enctype="multipart/form-data">
+                <div class="form-row align-items-center">
+                    <div class="col-md-4 mb-2">
+                        <input type="file" name="file" class="form-control" required>
                     </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-success">
+                    <div class="col-md-2 mb-2">
+                        <button class="btn btn-success btn-block">
                             <i class="fas fa-file-import"></i> Import
                         </button>
                     </div>
@@ -68,6 +81,51 @@
                     </div>
                 </div>
             </form>
+
+        </div>
+    </div>
+</div>
+
+                                    <!-- ================= FILTER ================= -->
+<form method="get" action="<?= site_url('siswa') ?>" class="mb-3">
+    <div class="form-row align-items-end">
+
+        <div class="col-md-3 mb-2">
+            <label>Filter Kelas</label>
+            <select name="kelas" class="form-control">
+                <option value="">- Semua Kelas -</option>
+                <?php foreach($kelas as $k): ?>
+                    <option value="<?= $k->id_kelas ?>"
+                        <?= ($this->input->get('kelas')==$k->id_kelas)?'selected':'' ?>>
+                        <?= $k->nama_kelas ?>
+                    </option>
+                <?php endforeach ?>
+            </select>
+        </div>
+
+        <div class="col-md-4 mb-2">
+            <label>Cari Nama / NIS</label>
+            <input type="text"
+                   name="keyword"
+                   class="form-control"
+                   placeholder="Ketik nama atau NIS..."
+                   value="<?= htmlspecialchars($this->input->get('keyword')) ?>">
+        </div>
+
+        <div class="col-md-2 mb-2">
+            <button class="btn btn-primary btn-block">
+                <i class="fas fa-search"></i> Cari
+            </button>
+        </div>
+
+        <div class="col-md-2 mb-2">
+            <a href="<?= site_url('siswa') ?>" class="btn btn-secondary btn-block">
+                Reset
+            </a>
+        </div>
+
+    </div>
+</form>
 
             <!-- ================= TABLE ================= -->
             <div class="table-responsive">
@@ -84,7 +142,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $no=1; foreach($siswa as $s): ?>
+                        <?php
+$start = $this->uri->segment(3) ?? 0;
+$no = $start + 1;
+foreach($siswa as $s):
+?>
+
                         <tr>
                             <td><?= $no++ ?></td>
                             <td><?= htmlspecialchars($s->nis) ?></td>
@@ -172,6 +235,10 @@
                         <?php endforeach ?>
                     </tbody>
                 </table>
+                <div class="mt-3">
+    <?= $pagination ?>
+</div>
+
             </div>
 
         </div>

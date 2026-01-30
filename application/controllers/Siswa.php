@@ -29,37 +29,52 @@ class Siswa extends MY_Controller {
      * INDEX + PAGINATION
      * ========================================================= */
     public function index($offset = 0)
-    {
-        $total = $this->Siswa_model->count_all();
+{
+    $this->load->library('pagination');
 
-        $config['base_url']    = site_url('siswa/index');
-        $config['total_rows']  = $total;
-        $config['per_page']    = $this->per_page;
-        $config['uri_segment'] = 3;
+    // ====== FILTER ======
+    $kelas   = $this->input->get('kelas');
+    $keyword = $this->input->get('keyword');
 
-        // bootstrap pagination
-        $config['full_tag_open']  = '<nav><ul class="pagination">';
-        $config['full_tag_close'] = '</ul></nav>';
-        $config['num_tag_open']   = '<li class="page-item">';
-        $config['num_tag_close']  = '</li>';
-        $config['cur_tag_open']   = '<li class="page-item active"><span class="page-link">';
-        $config['cur_tag_close']  = '</span></li>';
-        $config['attributes']     = ['class' => 'page-link'];
+    // ====== TOTAL DATA ======
+    $total = $this->Siswa_model->count_filtered($kelas, $keyword);
 
-        $this->pagination->initialize($config);
+    $config['base_url']            = site_url('siswa/index');
+    $config['total_rows']          = $total;
+    $config['per_page']            = $this->per_page;
+    $config['uri_segment']         = 3;
+    $config['reuse_query_string']  = TRUE;
 
-        $data['title']      = 'Data Siswa';
-        $data['siswa']      = $this->Siswa_model->get_limit($this->per_page, $offset);
-        $data['kelas']      = $this->Kelas_model->get_all();
-        $data['jurusan']    = $this->Jurusan_model->get_all();
-        $data['pagination'] = $this->pagination->create_links();
+    // ====== BOOTSTRAP PAGINATION ======
+    $config['full_tag_open']  = '<nav><ul class="pagination justify-content-center">';
+    $config['full_tag_close'] = '</ul></nav>';
+    $config['num_tag_open']   = '<li class="page-item">';
+    $config['num_tag_close']  = '</li>';
+    $config['cur_tag_open']   = '<li class="page-item active"><span class="page-link">';
+    $config['cur_tag_close']  = '</span></li>';
+    $config['attributes']     = ['class' => 'page-link'];
 
-        $this->load->view('templates/header', $data);
-        $this->load->view('templates/sidebar');
-        $this->load->view('templates/topbar');
-        $this->load->view('siswa/index', $data);
-        $this->load->view('templates/footer');
-    }
+    $this->pagination->initialize($config);
+
+    // ====== DATA ======
+    $data['title']   = 'Data Siswa';
+    $data['siswa']   = $this->Siswa_model->get_filtered(
+        $this->per_page,
+        $offset,
+        $kelas,
+        $keyword
+    );
+    $data['kelas']   = $this->Kelas_model->get_all();
+    $data['jurusan'] = $this->Jurusan_model->get_all();
+    $data['pagination'] = $this->pagination->create_links();
+
+    // ====== LOAD VIEW (JANGAN DIUBAH) ======
+    $this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar');
+    $this->load->view('templates/topbar');
+    $this->load->view('siswa/index', $data);
+    $this->load->view('templates/footer');
+}
 
     /* =========================================================
      * TAMBAH SISWA
@@ -78,10 +93,14 @@ class Siswa extends MY_Controller {
         $id_siswa = $this->db->insert_id();
 
         // generate QR (sekali)
-        $qr_path = $this->generate_qr_siswa($id_siswa, $nis);
+        $qr = $this->generate_qr_siswa($id_siswa, $nis);
 
-        $this->db->where('id_siswa', $id_siswa)
-                 ->update('siswa', ['qr_code' => $qr_path]);
+$this->db->where('id_siswa', $id_siswa)
+         ->update('siswa', [
+             'qr_code'  => $qr['path'],
+             'qr_token' => $qr['token']
+         ]);
+
 
         // akun login
         $this->db->insert('users', [
@@ -195,8 +214,12 @@ class Siswa extends MY_Controller {
         // generate QR (sekali)
         $qr = $this->generate_qr_siswa($id_siswa, $nis);
 
-        $this->db->where('id_siswa', $id_siswa)
-                 ->update('siswa', ['qr_code' => $qr]);
+$this->db->where('id_siswa', $id_siswa)
+         ->update('siswa', [
+             'qr_code'  => $qr['path'],
+             'qr_token' => $qr['token']
+         ]);
+
 
         // akun login
         $this->db->insert('users', [
@@ -223,17 +246,21 @@ class Siswa extends MY_Controller {
      * GENERATE QR (PRIVATE)
      * ========================================================= */
     private function generate_qr_siswa($id_siswa, $nis)
-    {
-        $dir = FCPATH . 'assets/qrcode/';
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
-
-        $token = 'PERPUS|SISWA|' . $id_siswa . '|' . md5($nis . time());
-        $file  = 'siswa_' . $id_siswa . '.png';
-
-        QRcode::png($token, $dir.$file, QR_ECLEVEL_L, 6);
-
-        return 'assets/qrcode/' . $file;
+{
+    $dir = FCPATH . 'assets/qrcode/';
+    if (!is_dir($dir)) {
+        mkdir($dir, 0755, true);
     }
+
+    $token = 'PERPUS|SISWA|' . $id_siswa . '|' . md5($nis . time());
+    $file  = 'siswa_' . $id_siswa . '.png';
+
+    QRcode::png($token, $dir.$file, QR_ECLEVEL_L, 6);
+
+    return [
+        'path'  => 'assets/qrcode/' . $file,
+        'token' => $token
+    ];
+}
+
 }
