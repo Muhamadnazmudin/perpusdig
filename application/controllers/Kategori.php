@@ -13,7 +13,7 @@ class Kategori extends MY_Controller {
     public function index()
     {
         $data['title'] = 'Kategori Buku';
-        $data['kategori'] = $this->Kategori_model->get_all();
+        $data['kategori'] = $this->Kategori_model->get_with_count();
 
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar');
@@ -29,6 +29,35 @@ class Kategori extends MY_Controller {
         ]);
 
         $this->session->set_flashdata('success', 'Kategori berhasil ditambahkan');
+        redirect('kategori');
+    }
+
+    public function update()
+    {
+        $id = $this->input->post('id_kategori');
+
+        $this->Kategori_model->update($id, [
+            'nama_kategori' => $this->input->post('nama_kategori', TRUE)
+        ]);
+
+        $this->session->set_flashdata('success', 'Kategori berhasil diperbarui');
+        redirect('kategori');
+    }
+
+    public function hapus($id)
+    {
+        if ($this->Kategori_model->is_used($id)) {
+            $this->session->set_flashdata(
+                'error',
+                'Kategori tidak bisa dihapus karena sedang digunakan oleh buku.'
+            );
+            redirect('kategori');
+            return;
+        }
+
+        $this->Kategori_model->delete($id);
+
+        $this->session->set_flashdata('success', 'Kategori berhasil dihapus');
         redirect('kategori');
     }
 }

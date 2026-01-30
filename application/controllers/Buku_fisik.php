@@ -38,7 +38,8 @@ class Buku_fisik extends MY_Controller {
 
 public function simpan()
 {
-    $isbn = $this->input->post('isbn', TRUE);
+    $isbn = trim($this->input->post('isbn', TRUE));
+$isbn = ($isbn === '') ? null : $isbn;
 
     // ===== CEK ISBN DUPLIKAT =====
     if (!empty($isbn)) {
@@ -120,7 +121,8 @@ public function update($id)
         show_404();
     }
 
-    $isbn = $this->input->post('isbn', TRUE);
+    $isbn = trim($this->input->post('isbn', TRUE));
+$isbn = ($isbn === '') ? null : $isbn;
 
     // ===== CEK ISBN DUPLIKAT (KECUALI DIRI SENDIRI) =====
     if (!empty($isbn)) {
@@ -256,6 +258,7 @@ public function import()
         }
 
         $isbn = trim($row['A']);
+$isbn = ($isbn === '') ? null : $isbn;
 
         // skip baris kosong
         if (empty($row['B'])) {

@@ -10,7 +10,7 @@ class Home extends CI_Controller {
 
         // LIMIT tampil di home (etalase)
         $data['ebooks'] = $this->Ebook_model
-            ->get_filtered(6, 0); // 6 e-book terbaru
+            ->get_filtered(8, 0); // 6 e-book terbaru
 
         $data['buku_fisik'] = $this->db
             ->limit(6)
