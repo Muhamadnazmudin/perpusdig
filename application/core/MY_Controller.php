@@ -9,12 +9,14 @@ class MY_Controller extends CI_Controller {
     {
         parent::__construct();
 
-        // CONTROLLER PUBLIK (TIDAK PERLU LOGIN)
-        $public_controllers = ['home', 'auth'];
+        // 🔥 ABAIKAN REQUEST FILE (favicon.ico, dll)
+        if (strpos($this->router->class, '.') !== false) {
+            return;
+        }
 
+        $public_controllers = ['home', 'auth'];
         $current_controller = strtolower($this->router->class);
 
-        // JIKA BUKAN CONTROLLER PUBLIK → WAJIB LOGIN
         if (!in_array($current_controller, $public_controllers, true)) {
 
             if (!$this->session->userdata('login')) {
@@ -24,14 +26,12 @@ class MY_Controller extends CI_Controller {
 
             $this->user = $this->session->userdata('user');
 
-            // HARD GUARD
             if (!isset($this->user['id_role'])) {
                 $this->session->sess_destroy();
                 redirect('auth/login');
                 exit;
             }
 
-            // CAST SEKALI DI SINI
             $this->user['id_role'] = (int) $this->user['id_role'];
         }
     }
