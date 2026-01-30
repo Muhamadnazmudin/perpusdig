@@ -97,5 +97,39 @@ class Peminjaman_model extends CI_Model {
         ->where('status', 'dipinjam')
         ->count_all_results('peminjaman');
 }
+/* ================= LAPORAN ================= */
+
+// LAPORAN PEMINJAMAN
+public function get_laporan($awal = null, $akhir = null)
+{
+    $this->db
+        ->select('
+            peminjaman.*,
+            buku_fisik.judul,
+            users.nama,
+            siswa.nis,
+            kelas.nama_kelas,
+            DATEDIFF(
+                IFNULL(peminjaman.tanggal_kembali, CURDATE()),
+                peminjaman.tanggal_jatuh_tempo
+            ) AS hari_terlambat
+        ')
+        ->from('peminjaman')
+        ->join('buku_fisik', 'buku_fisik.id_buku = peminjaman.id_buku', 'left')
+        ->join('users', 'users.id_user = peminjaman.id_user', 'left')
+        ->join('siswa', 'siswa.nis = users.username', 'left')
+        ->join('kelas', 'kelas.id_kelas = siswa.id_kelas', 'left');
+
+    if ($awal && $akhir) {
+        $this->db->where('DATE(peminjaman.tanggal_pinjam) >=', $awal);
+        $this->db->where('DATE(peminjaman.tanggal_pinjam) <=', $akhir);
+    }
+
+    return $this->db
+        ->order_by('peminjaman.tanggal_pinjam', 'DESC')
+        ->get()
+        ->result();
+}
+
 
 }
