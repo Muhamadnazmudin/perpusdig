@@ -21,13 +21,21 @@ class Backup_model extends CI_Model {
     }
 
     public function restore_database($tmp_file)
-    {
-        $sql = file_get_contents($tmp_file);
+{
+    $sql = file_get_contents($tmp_file);
 
-        foreach (explode(";\n", $sql) as $query) {
-            if (trim($query)) {
-                $this->db->query($query);
-            }
+    // 🔥 MATIKAN FOREIGN KEY CHECK
+    $this->db->query('SET FOREIGN_KEY_CHECKS = 0');
+
+    foreach (explode(";\n", $sql) as $query) {
+        $query = trim($query);
+        if ($query) {
+            $this->db->query($query);
         }
     }
+
+    // 🔥 AKTIFKAN LAGI
+    $this->db->query('SET FOREIGN_KEY_CHECKS = 1');
+}
+
 }
