@@ -6,21 +6,29 @@ class Peminjaman_model extends CI_Model {
     /* ================= ADMIN ================= */
 
     public function get_all()
-    {
-        return $this->db
-            ->select('
-    peminjaman.*,
-    buku_fisik.judul,
-    users.nama,
-    DATEDIFF(CURDATE(), peminjaman.tanggal_jatuh_tempo) AS hari_terlambat
-')
-            ->from('peminjaman')
-            ->join('buku_fisik','buku_fisik.id_buku = peminjaman.id_buku')
-            ->join('users','users.id_user = peminjaman.id_user')
-            ->order_by('peminjaman.id_pinjam','DESC')
-            ->get()
-            ->result();
-    }
+{
+    return $this->db
+        ->select('
+            peminjaman.*,
+            buku_fisik.judul,
+            users.nama,
+            siswa.no_hp,
+            CASE
+                WHEN peminjaman.status = "dipinjam"
+                 AND CURDATE() > peminjaman.tanggal_jatuh_tempo
+                THEN DATEDIFF(CURDATE(), peminjaman.tanggal_jatuh_tempo)
+                ELSE 0
+            END AS hari_terlambat
+        ')
+        ->from('peminjaman')
+        ->join('buku_fisik', 'buku_fisik.id_buku = peminjaman.id_buku')
+        ->join('users', 'users.id_user = peminjaman.id_user')
+        ->join('siswa', 'siswa.nis = users.username', 'left')
+        ->order_by('peminjaman.id_pinjam', 'DESC')
+        ->get()
+        ->result();
+}
+
 
     public function get_by_id($id)
     {

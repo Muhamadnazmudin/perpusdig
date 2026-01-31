@@ -80,15 +80,26 @@ class Siswa extends MY_Controller {
      * TAMBAH SISWA
      * ========================================================= */
     public function tambah()
-    {
-        $nis = $this->input->post('nis');
+{
+    $nis   = $this->input->post('nis');
 
-        $this->db->insert('siswa', [
-            'nis'        => $nis,
-            'nama_siswa' => $this->input->post('nama_siswa'),
-            'id_kelas'   => $this->input->post('id_kelas'),
-            'id_jurusan' => $this->input->post('id_jurusan')
-        ]);
+    // === TARUH DI SINI ===
+    $no_hp = $this->input->post('no_hp');
+
+    // normalisasi no HP
+    $no_hp = preg_replace('/[^0-9]/', '', $no_hp);
+    if (substr($no_hp, 0, 1) == '0') {
+        $no_hp = '62' . substr($no_hp, 1);
+    }
+    // === SAMPAI SINI ===
+
+    $this->db->insert('siswa', [
+        'nis'        => $nis,
+        'nama_siswa' => $this->input->post('nama_siswa'),
+        'no_hp'      => $no_hp,
+        'id_kelas'   => $this->input->post('id_kelas'),
+        'id_jurusan' => $this->input->post('id_jurusan')
+    ]);
 
         $id_siswa = $this->db->insert_id();
 
@@ -119,20 +130,29 @@ $this->db->where('id_siswa', $id_siswa)
      * EDIT SISWA (QR TIDAK DIUBAH)
      * ========================================================= */
     public function edit()
-    {
-        $id = $this->input->post('id_siswa');
+{
+    $id    = $this->input->post('id_siswa');
+    $no_hp = $this->input->post('no_hp');
 
-        $this->db->where('id_siswa', $id)
-                 ->update('siswa', [
-                     'nis'        => $this->input->post('nis'),
-                     'nama_siswa' => $this->input->post('nama_siswa'),
-                     'id_kelas'   => $this->input->post('id_kelas'),
-                     'id_jurusan' => $this->input->post('id_jurusan')
-                 ]);
-
-        $this->session->set_flashdata('success', 'Data siswa diperbarui');
-        redirect('siswa');
+    // normalisasi no HP
+    $no_hp = preg_replace('/[^0-9]/', '', $no_hp);
+    if (substr($no_hp, 0, 1) == '0') {
+        $no_hp = '62' . substr($no_hp, 1);
     }
+
+    $this->db->where('id_siswa', $id)
+             ->update('siswa', [
+                 'nis'        => $this->input->post('nis'),
+                 'nama_siswa' => $this->input->post('nama_siswa'),
+                 'no_hp'      => $no_hp,
+                 'id_kelas'   => $this->input->post('id_kelas'),
+                 'id_jurusan' => $this->input->post('id_jurusan')
+             ]);
+
+    $this->session->set_flashdata('success', 'Data siswa diperbarui');
+    redirect('siswa');
+}
+
 
     /* =========================================================
      * HAPUS SISWA
@@ -165,7 +185,6 @@ $this->db->where('id_siswa', $id_siswa)
         return;
     }
 
-    // sama persis seperti AdminEbook
     require FCPATH.'vendor/autoload.php';
 
     $file = $_FILES['file']['tmp_name'];
@@ -181,47 +200,82 @@ $this->db->where('id_siswa', $id_siswa)
     $sheet  = $reader->load($file)->getActiveSheet()->toArray();
 
     $insert = 0;
+    $error  = [];
 
     foreach ($sheet as $i => $row) {
 
-        // skip header
-        if ($i == 0) continue;
+        if ($i == 0) continue; // header
+        $baris = $i + 1;
 
-        // validasi kolom
-        if (empty($row[0]) || empty($row[1])) continue;
+        if (empty($row[0]) || empty($row[1])) {
+            $error[] = "Baris {$baris}: NIS / Nama kosong";
+            continue;
+        }
 
-        $nis        = trim((string)$row[0]); // penting: string
+        $nis        = trim((string)$row[0]);
         $nama       = trim($row[1]);
-        $id_kelas   = (int)$row[2];
-        $id_jurusan = (int)$row[3];
+        $no_hp      = trim((string)$row[2]);
+        $id_kelas   = trim($row[3]);
+        $id_jurusan = trim($row[4]);
 
-        if ($nis === '' || $nama === '') continue;
+        if ($id_kelas === '') {
+            $error[] = "Baris {$baris}: ID Kelas kosong";
+            continue;
+        }
+
+        if (!is_numeric($id_kelas)) {
+            $error[] = "Baris {$baris}: ID Kelas tidak valid";
+            continue;
+        }
+
+        $id_kelas = (int)$id_kelas;
+        $id_jurusan = (int)$id_jurusan;
+
+        // 🔒 CEK KELAS
+        if (!$this->db->get_where('kelas', ['id_kelas'=>$id_kelas])->row()) {
+            $error[] = "Baris {$baris}: ID Kelas ({$id_kelas}) tidak tersedia";
+            continue;
+        }
+
+        // 🔒 CEK JURUSAN
+        if (!$this->db->get_where('jurusan', ['id_jurusan'=>$id_jurusan])->row()) {
+            $error[] = "Baris {$baris}: ID Jurusan ({$id_jurusan}) tidak tersedia";
+            continue;
+        }
 
         // skip jika NIS sudah ada
-        $cek = $this->db->get_where('siswa', ['nis' => $nis])->row();
-        if ($cek) continue;
+        if ($this->db->get_where('siswa', ['nis' => $nis])->row()) {
+            $error[] = "Baris {$baris}: NIS {$nis} sudah terdaftar";
+            continue;
+        }
 
-        // insert siswa
+        // normalisasi no HP (AMAN)
+        $no_hp = preg_replace('/[^0-9]/', '', $no_hp);
+        if (substr($no_hp, 0, 1) === '0') {
+            $no_hp = '62' . substr($no_hp, 1);
+        }
+
+        // INSERT (TETAP SEPERTI ASLI)
         $this->db->insert('siswa', [
             'nis'        => $nis,
             'nama_siswa' => $nama,
+            'no_hp'      => $no_hp,
             'id_kelas'   => $id_kelas,
             'id_jurusan' => $id_jurusan
         ]);
 
         $id_siswa = $this->db->insert_id();
 
-        // generate QR (sekali)
+        // generate QR (TETAP)
         $qr = $this->generate_qr_siswa($id_siswa, $nis);
 
-$this->db->where('id_siswa', $id_siswa)
-         ->update('siswa', [
-             'qr_code'  => $qr['path'],
-             'qr_token' => $qr['token']
-         ]);
+        $this->db->where('id_siswa', $id_siswa)
+                 ->update('siswa', [
+                     'qr_code'  => $qr['path'],
+                     'qr_token' => $qr['token']
+                 ]);
 
-
-        // akun login
+        // akun login (TETAP)
         $this->db->insert('users', [
             'id_role'  => 3,
             'username' => $nis,
@@ -233,13 +287,18 @@ $this->db->where('id_siswa', $id_siswa)
         $insert++;
     }
 
-    $this->session->set_flashdata(
-        'success',
-        "Import siswa berhasil: {$insert} data"
-    );
+    // PESAN notip
+    $msg = "Import siswa selesai.<br>✔ {$insert} data berhasil";
 
+    if (!empty($error)) {
+        $msg .= "<br><br><strong>❌ Data gagal:</strong><br>";
+        $msg .= implode('<br>', array_slice($error, 0, 10));
+    }
+
+    $this->session->set_flashdata('success', $msg);
     redirect('siswa');
 }
+
 
 
     /* =========================================================
