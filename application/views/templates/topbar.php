@@ -21,28 +21,44 @@
             <!-- Topbar Navbar -->
             <ul class="navbar-nav ml-auto">
 
-                <div class="topbar-divider d-none d-sm-block"></div>
+    <!-- 🔔 NOTIF PEMINJAMAN (ADMIN) -->
+    <?php if ($this->user['id_role'] === 1): ?>
+   <li class="nav-item no-arrow mx-1">
+    <a class="nav-link" href="<?= site_url('peminjaman') ?>" title="Pengajuan Peminjaman">
+        <i class="fas fa-bell fa-fw"></i>
 
-                <!-- User Info -->
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-                            <?= $this->session->userdata('user')['nama'] ?>
-                        </span>
-                        <i class="fas fa-user-circle fa-2x"></i>
-                    </a>
+        <?php if (!empty($total_menunggu) && $total_menunggu > 0): ?>
+            <span class="badge badge-danger badge-counter">
+                <?= $total_menunggu ?>
+            </span>
+        <?php endif; ?>
+    </a>
+</li>
 
-                    <!-- Dropdown -->
-                    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
-                        <a class="dropdown-item" href="<?= site_url('auth/logout') ?>">
-                            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                            Logout
-                        </a>
-                    </div>
-                </li>
+    <?php endif; ?>
 
-            </ul>
+    <div class="topbar-divider d-none d-sm-block"></div>
+
+    <!-- User Info -->
+    <li class="nav-item dropdown no-arrow">
+        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                <?= $this->session->userdata('user')['nama'] ?>
+            </span>
+            <i class="fas fa-user-circle fa-2x"></i>
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
+            <a class="dropdown-item" href="<?= site_url('auth/logout') ?>">
+                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                Logout
+            </a>
+        </div>
+    </li>
+
+</ul>
+
 
         </nav>
         <!-- End of Topbar -->

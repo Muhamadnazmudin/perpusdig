@@ -35,13 +35,25 @@
                         <td><?= $p->tanggal_pinjam ?></td>
                         <td><?= $p->tanggal_jatuh_tempo ?></td>
                         <td>
-<?php if ($p->hari_terlambat > 0): ?>
-    <span class="badge badge-danger">
-        Terlambat <?= $p->hari_terlambat ?> hari
-    </span>
-<?php else: ?>
-    <span class="badge badge-warning">Dipinjam</span>
-<?php endif; ?>
+    <?php if ($p->status == 'menunggu'): ?>
+        <span class="badge badge-warning">Menunggu Persetujuan</span>
+
+    <?php elseif ($p->status == 'dipinjam'): ?>
+
+        <?php if ($p->hari_terlambat > 0): ?>
+            <span class="badge badge-danger">
+                Terlambat <?= $p->hari_terlambat ?> hari
+            </span>
+        <?php else: ?>
+            <span class="badge badge-success">Dipinjam</span>
+        <?php endif; ?>
+
+    <?php elseif ($p->status == 'ditolak'): ?>
+        <span class="badge badge-danger">Ditolak</span>
+
+    <?php elseif ($p->status == 'kembali'): ?>
+        <span class="badge badge-secondary">Dikembalikan</span>
+    <?php endif; ?>
 </td>
 
                     </tr>

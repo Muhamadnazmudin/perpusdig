@@ -106,7 +106,15 @@ $role = (int) $this->user['id_role']; // 1=admin, 2=guru, 3=siswa
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menuPinjam">
             <i class="fas fa-fw fa-exchange-alt"></i>
-            <span>Peminjaman</span>
+            <span>
+    Peminjaman
+    <?php if ($role === 1 && !empty($total_menunggu) && $total_menunggu > 0): ?>
+        <span class="badge badge-danger ml-1">
+            <?= $total_menunggu ?>
+        </span>
+    <?php endif; ?>
+</span>
+
         </a>
         <div id="menuPinjam" class="collapse">
             <div class="bg-white py-2 collapse-inner rounded">

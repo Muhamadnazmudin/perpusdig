@@ -23,8 +23,8 @@ class Dashboard extends MY_Controller {
         $data['stat'] = $this->Dashboard_model->get_stat_admin();
 
         $this->load->view('templates/header', $data);
-        $this->load->view('templates/sidebar');
-        $this->load->view('templates/topbar');
+        $this->load->view('templates/sidebar', $this->data);
+$this->load->view('templates/topbar', $this->data);
         $this->load->view('dashboard/admin', $data);
         $this->load->view('templates/footer');
         return;
@@ -50,7 +50,7 @@ class Dashboard extends MY_Controller {
 
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar');
-        $this->load->view('templates/topbar');
+        $this->load->view('templates/topbar',);
         $this->load->view('dashboard/siswa', $data);
         $this->load->view('templates/footer');
         return;

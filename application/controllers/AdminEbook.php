@@ -22,8 +22,8 @@ class AdminEbook extends MY_Controller {
         ];
 
         $this->load->view('templates/header',$data);
-        $this->load->view('templates/sidebar');
-        $this->load->view('templates/topbar');
+        $this->load->view('templates/sidebar', $this->data);
+$this->load->view('templates/topbar', $this->data);
         $this->load->view('admin/ebook/index',$data);
         $this->load->view('templates/footer');
     }

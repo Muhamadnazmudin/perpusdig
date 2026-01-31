@@ -16,8 +16,8 @@ class Kelas extends MY_Controller {
         $data['kelas'] = $this->Kelas_model->get_all();
 
         $this->load->view('templates/header', $data);
-        $this->load->view('templates/sidebar');
-        $this->load->view('templates/topbar');
+        $this->load->view('templates/sidebar', $this->data);
+$this->load->view('templates/topbar', $this->data);
         $this->load->view('kelas/index', $data);
         $this->load->view('templates/footer');
     }

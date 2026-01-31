@@ -270,7 +270,7 @@
         <div class="grid-3">
             <?php foreach ($ebooks as $e): ?>
                 <?php
-                // COVER E-BOOK (AMAN)
+                // COVER E-BOOK
                 $cover_ebook = (!empty($e->cover) &&
                     file_exists(FCPATH.'assets/uploads/cover_ebook/'.$e->cover))
                     ? base_url('assets/uploads/cover_ebook/'.$e->cover)

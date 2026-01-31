@@ -97,6 +97,34 @@ class Peminjaman_model extends CI_Model {
         ->where('status', 'dipinjam')
         ->count_all_results('peminjaman');
 }
+public function cek_pinjam_menunggu_atau_aktif($id_user, $id_buku)
+{
+    return $this->db
+        ->where('id_user', $id_user)
+        ->where('id_buku', $id_buku)
+        ->where_in('status', ['menunggu','dipinjam'])
+        ->get('peminjaman')
+        ->row();
+}
+public function get_by_user($id_user)
+{
+    return $this->db
+        ->select('
+            peminjaman.*,
+            buku_fisik.judul,
+            DATEDIFF(
+                IFNULL(peminjaman.tanggal_kembali, CURDATE()),
+                peminjaman.tanggal_jatuh_tempo
+            ) AS hari_terlambat
+        ')
+        ->from('peminjaman')
+        ->join('buku_fisik','buku_fisik.id_buku = peminjaman.id_buku')
+        ->where('peminjaman.id_user', $id_user)
+        ->order_by('peminjaman.id_pinjam','DESC') // ✅ FIX UTAMA
+        ->get()
+        ->result();
+}
+
 /* ================= LAPORAN ================= */
 
 // LAPORAN PEMINJAMAN
@@ -129,6 +157,12 @@ public function get_laporan($awal = null, $akhir = null)
         ->order_by('peminjaman.tanggal_pinjam', 'DESC')
         ->get()
         ->result();
+}
+public function count_menunggu()
+{
+    return $this->db
+        ->where('status', 'menunggu')
+        ->count_all_results('peminjaman');
 }
 
 

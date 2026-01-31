@@ -4,6 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class MY_Controller extends CI_Controller {
 
     public $user = [];
+    public $data = []; // 🔥 TAMBAH BARIS INI
 
     public function __construct()
     {
@@ -33,6 +34,14 @@ class MY_Controller extends CI_Controller {
             }
 
             $this->user['id_role'] = (int) $this->user['id_role'];
+        }
+
+        // 🔔 NOTIF PENGAJUAN PEMINJAMAN (ADMIN)
+        if (!empty($this->user) && isset($this->user['id_role']) && $this->user['id_role'] === 1) {
+            $this->load->model('Peminjaman_model');
+            $this->data['total_menunggu'] = $this->Peminjaman_model->count_menunggu();
+        } else {
+            $this->data['total_menunggu'] = 0;
         }
     }
 
