@@ -6,13 +6,13 @@ class Pengaturan extends MY_Controller {
     public function __construct()
     {
         parent::__construct();
-        $this->only_role([1]); // ADMIN ONLY
         $this->load->model('Pengaturan_model');
     }
 
     /* ===================== SEKOLAH ===================== */
     public function sekolah()
     {
+        $this->only_role([1]);
         $data = [
             'title'   => 'Pengaturan Sekolah',
             'sekolah' => $this->Pengaturan_model->get()
@@ -27,6 +27,7 @@ class Pengaturan extends MY_Controller {
 
     public function simpan_sekolah()
 {
+    $this->only_role([1]);
     $data = [
         'nama_sekolah' => $this->input->post('nama_sekolah', true),
         'npsn' => $this->input->post('npsn', true),
@@ -64,6 +65,7 @@ class Pengaturan extends MY_Controller {
 }
 private function _upload_logo()
 {
+    $this->only_role([1]);
     $config = [
         'upload_path'   => './assets/uploads/logo/',
         'allowed_types' => 'jpg|jpeg|png',
@@ -87,6 +89,24 @@ private function _upload_logo()
     }
 
     return $this->upload->data('file_name');
+}
+public function simpan_tema()
+{
+    $theme = $this->input->post('theme');
+    $allowed = ['light','green','orange','pink','purple','dark'];
+
+    if (!in_array($theme, $allowed)) {
+        redirect($_SERVER['HTTP_REFERER']);
+    }
+
+    $id_user = $this->session->userdata('user')['id_user'];
+
+    $this->db->where('id_user', $id_user)
+             ->update('users', ['theme' => $theme]);
+
+    $this->session->set_userdata('theme', $theme);
+
+    redirect($_SERVER['HTTP_REFERER']);
 }
 
 }

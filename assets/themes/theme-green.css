@@ -1,0 +1,81 @@
+/* =========================
+   BASE BACKGROUND
+========================= */
+body.theme-green {
+	background-color: #e9f7f1 !important; /* hijau soft */
+}
+
+.theme-green #content-wrapper {
+	background-color: #e9f7f1 !important;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+.theme-green .sidebar,
+.theme-green .bg-gradient-primary {
+	background-image: none !important;
+	background-color: #1cc88a !important;
+}
+
+/* =========================
+   TOPBAR & FOOTER
+========================= */
+.theme-green .topbar,
+.theme-green .sticky-footer {
+	background-color: #ffffff !important;
+}
+
+/* =========================
+   CARD
+========================= */
+.theme-green .card {
+	background-color: #ffffff;
+	border-left: 4px solid #1cc88a;
+	box-shadow: 0 0.15rem 1.75rem rgba(0, 0, 0, 0.08);
+}
+
+.theme-green .card-header {
+	background-color: #f1fcf7;
+	border-bottom: 1px solid #c7efdd;
+}
+
+/* =========================
+   TABLE
+========================= */
+.theme-green .table {
+	background-color: #ffffff;
+}
+
+.theme-green .table thead th {
+	background-color: #d1f2e5;
+	color: #0f5132;
+	border-color: #b6e9d3;
+}
+
+/* =========================
+   FORM
+========================= */
+.theme-green .form-control:focus {
+	border-color: #1cc88a;
+	box-shadow: 0 0 0 0.2rem rgba(28, 200, 138, 0.25);
+}
+
+/* =========================
+   BUTTON & BADGE
+========================= */
+.theme-green .btn-primary {
+	background-color: #1cc88a !important;
+	border-color: #1cc88a !important;
+}
+
+.theme-green .badge-primary {
+	background-color: #1cc88a;
+}
+
+/* =========================
+   TEXT
+========================= */
+.theme-green .text-primary {
+	color: #1cc88a !important;
+}

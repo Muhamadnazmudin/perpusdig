@@ -1,0 +1,40 @@
+body.theme-orange,
+.theme-orange #content-wrapper {
+	background-color: #fff3e6 !important;
+}
+
+.theme-orange .sidebar,
+.theme-orange .bg-gradient-primary {
+	background-image: none !important;
+	background-color: #fd7e14 !important;
+}
+
+.theme-orange .topbar,
+.theme-orange .sticky-footer {
+	background-color: #ffffff !important;
+}
+
+.theme-orange .card {
+	background-color: #ffffff;
+	border-left: 4px solid #fd7e14;
+}
+
+.theme-orange .card-header {
+	background-color: #fff0e0;
+}
+
+.theme-orange .table thead th {
+	background-color: #ffe0c2;
+	color: #7a3e00;
+}
+
+.theme-orange .form-control:focus {
+	border-color: #fd7e14;
+	box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25);
+}
+
+.theme-orange .btn-primary,
+.theme-orange .badge-primary {
+	background-color: #fd7e14 !important;
+	border-color: #fd7e14 !important;
+}

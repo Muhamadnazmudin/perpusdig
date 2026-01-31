@@ -1,0 +1,40 @@
+body.theme-pink,
+.theme-pink #content-wrapper {
+	background-color: #fde8f1 !important;
+}
+
+.theme-pink .sidebar,
+.theme-pink .bg-gradient-primary {
+	background-image: none !important;
+	background-color: #e83e8c !important;
+}
+
+.theme-pink .topbar,
+.theme-pink .sticky-footer {
+	background-color: #ffffff !important;
+}
+
+.theme-pink .card {
+	background-color: #ffffff;
+	border-left: 4px solid #e83e8c;
+}
+
+.theme-pink .card-header {
+	background-color: #fde0eb;
+}
+
+.theme-pink .table thead th {
+	background-color: #f9c6dc;
+	color: #7d1f4a;
+}
+
+.theme-pink .form-control:focus {
+	border-color: #e83e8c;
+	box-shadow: 0 0 0 0.2rem rgba(232, 62, 140, 0.25);
+}
+
+.theme-pink .btn-primary,
+.theme-pink .badge-primary {
+	background-color: #e83e8c !important;
+	border-color: #e83e8c !important;
+}

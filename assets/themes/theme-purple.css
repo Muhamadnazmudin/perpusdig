@@ -1,0 +1,40 @@
+body.theme-purple,
+.theme-purple #content-wrapper {
+	background-color: #f1ecfb !important;
+}
+
+.theme-purple .sidebar,
+.theme-purple .bg-gradient-primary {
+	background-image: none !important;
+	background-color: #6f42c1 !important;
+}
+
+.theme-purple .topbar,
+.theme-purple .sticky-footer {
+	background-color: #ffffff !important;
+}
+
+.theme-purple .card {
+	background-color: #ffffff;
+	border-left: 4px solid #6f42c1;
+}
+
+.theme-purple .card-header {
+	background-color: #ebe3fb;
+}
+
+.theme-purple .table thead th {
+	background-color: #d9c9f2;
+	color: #3c1a78;
+}
+
+.theme-purple .form-control:focus {
+	border-color: #6f42c1;
+	box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25);
+}
+
+.theme-purple .btn-primary,
+.theme-purple .badge-primary {
+	background-color: #6f42c1 !important;
+	border-color: #6f42c1 !important;
+}

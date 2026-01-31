@@ -38,6 +38,50 @@
     <?php endif; ?>
 
     <div class="topbar-divider d-none d-sm-block"></div>
+    <!-- THEME SWITCHER -->
+<li class="nav-item dropdown no-arrow mx-1">
+    <a class="nav-link dropdown-toggle" href="#" id="themeDropdown"
+       role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-palette fa-fw"></i>
+        <span class="d-none d-lg-inline small">Tema</span>
+    </a>
+
+    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in p-3"
+         aria-labelledby="themeDropdown"
+         style="min-width: 200px;">
+
+        <div class="d-flex justify-content-between flex-wrap">
+
+            <?php
+            $themes = [
+                'light'  => '#f8f9fc',
+                'green'  => '#1cc88a',
+                'orange' => '#fd7e14',
+                'pink'   => '#e83e8c',
+                'purple' => '#6f42c1',
+                'dark'   => '#1f1f1f',
+            ];
+            $active = $this->session->userdata('theme') ?? 'light';
+            ?>
+
+            <?php foreach ($themes as $key => $color): ?>
+                <form action="<?= site_url('pengaturan/simpan_tema') ?>" method="post" style="display:inline;">
+                    <input type="hidden" name="theme" value="<?= $key ?>">
+                    <button type="submit"
+    class="theme-dot <?= ($active == $key) ? 'active' : '' ?>"
+    style="background-color: <?= $color ?>;"
+    title="<?= ucfirst($key) ?>">
+</button>
+
+                </form>
+            <?php endforeach; ?>
+
+        </div>
+
+    </div>
+</li>
+<!-- END THEME SWITCHER -->
+
 
     <!-- User Info -->
     <li class="nav-item dropdown no-arrow">

@@ -62,6 +62,7 @@ private function generate_math_captcha()
 
         $this->session->set_userdata([
             'login' => true,
+            'theme' => $user['theme'] ?? 'light',
             'user' => [
                 'id_user'  => $user['id_user'],
                 'id_role'  => $user['id_role'],
@@ -96,6 +97,7 @@ public function login_admin()
 
             $this->session->set_userdata([
                 'login' => true,
+                'theme' => $user['theme'] ?? 'light',
                 'user'  => [
                     'id_user'  => $user['id_user'],
                     'id_role'  => $user['id_role'],
