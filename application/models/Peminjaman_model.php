@@ -164,6 +164,16 @@ public function count_menunggu()
         ->where('status', 'menunggu')
         ->count_all_results('peminjaman');
 }
+public function get_pengajuan_buku($id_user, $id_buku)
+{
+    return $this->db
+        ->where('id_user', $id_user)
+        ->where('id_buku', $id_buku)
+        ->where_in('status', ['menunggu','dipinjam','ditolak'])
+        ->order_by('id_pinjam', 'DESC')
+        ->get('peminjaman')
+        ->row();
+}
 
 
 }

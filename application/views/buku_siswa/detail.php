@@ -52,37 +52,45 @@
                 <!-- ACTION -->
                 <div class="mt-4">
 
-    <?php if ($sudah_ajukan): ?>
+<?php if ($status_pengajuan === 'menunggu'): ?>
 
-        <button class="btn btn-warning mr-2" disabled>
-            <i class="fas fa-clock"></i>
-            Pengajuan Sedang Diproses
-        </button>
+    <button class="btn btn-warning mr-2" disabled>
+        <i class="fas fa-clock"></i>
+        Pengajuan Sedang Diproses
+    </button>
 
-    <?php elseif ($total_pinjam >= $this->config->item('max_pinjam')): ?>
+<?php elseif ($status_pengajuan === 'dipinjam'): ?>
 
-        <button class="btn btn-danger mr-2" disabled>
-            <i class="fas fa-lock"></i>
-            Limit Peminjaman Tercapai
-        </button>
+    <button class="btn btn-primary mr-2" disabled>
+        <i class="fas fa-book"></i>
+        Buku Sedang Dipinjam
+    </button>
 
-    <?php elseif ($buku->stok > 0): ?>
+<?php elseif ($total_pinjam >= $this->config->item('max_pinjam')): ?>
 
-        <button class="btn btn-success mr-2"
-                data-toggle="modal"
-                data-target="#modalPinjam">
-            <i class="fas fa-book-reader"></i>
-            Ajukan Peminjaman
-        </button>
+    <button class="btn btn-danger mr-2" disabled>
+        <i class="fas fa-lock"></i>
+        Limit Peminjaman Tercapai
+    </button>
 
-    <?php else: ?>
+<?php elseif ($buku->stok > 0): ?>
 
-        <button class="btn btn-secondary mr-2" disabled>
-            <i class="fas fa-times"></i>
-            Stok Habis
-        </button>
+    <!-- 🔥 TERMASUK KASUS: ditolak -->
+    <button class="btn btn-success mr-2"
+            data-toggle="modal"
+            data-target="#modalPinjam">
+        <i class="fas fa-book-reader"></i>
+        Ajukan Peminjaman
+    </button>
 
-    <?php endif; ?>
+<?php else: ?>
+
+    <button class="btn btn-secondary mr-2" disabled>
+        <i class="fas fa-times"></i>
+        Stok Habis
+    </button>
+
+<?php endif; ?>
 
     <a href="<?= site_url('buku') ?>" class="btn btn-outline-secondary">
         <i class="fas fa-arrow-left"></i> Kembali

@@ -40,16 +40,18 @@ public function detail($id)
 
     $data['title'] = 'Detail Buku';
 
-    // 🔽 TAMBAHAN PENTING UNTUK VIEW
     $data['total_pinjam'] = $this->Peminjaman_model
         ->count_pinjam_aktif($this->user['id_user']);
 
-    $data['sudah_ajukan'] = $this->Peminjaman_model
-        ->cek_pinjam_menunggu_atau_aktif($this->user['id_user'], $id);
+    // 🔥 STATUS PENGAJUAN YANG BENAR
+    $pengajuan = $this->Peminjaman_model
+        ->get_pengajuan_buku($this->user['id_user'], $id);
+
+    $data['status_pengajuan'] = $pengajuan ? $pengajuan->status : null;
 
     $this->load->view('templates/header', $data);
-    $this->load->view('templates/sidebar');
-    $this->load->view('templates/topbar');
+    $this->load->view('templates/sidebar', $this->data);
+    $this->load->view('templates/topbar', $this->data);
     $this->load->view('buku_siswa/detail', $data);
     $this->load->view('templates/footer');
 }

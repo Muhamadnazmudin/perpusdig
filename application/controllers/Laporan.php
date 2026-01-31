@@ -72,8 +72,8 @@ class Laporan extends MY_Controller {
     private function _view($view, $data)
     {
         $this->load->view('templates/header', $data);
-        $this->load->view('templates/sidebar');
-        $this->load->view('templates/topbar');
+        $this->load->view('templates/sidebar', $this->data);
+        $this->load->view('templates/topbar', $this->data);
         $this->load->view($view, $data);
         $this->load->view('templates/footer');
     }
@@ -102,6 +102,42 @@ public function kunjungan_pdf()
     $this->pdf->stream('laporan_kunjungan.pdf', ['Attachment' => false]);
 }
 
+public function peminjaman_excel()
+{
+    $data = $this->Peminjaman_model->get_laporan(
+        $this->input->get('awal'),
+        $this->input->get('akhir')
+    );
 
+    header("Content-Type: application/vnd.ms-excel");
+    header("Content-Disposition: attachment; filename=laporan_peminjaman.xls");
+
+    echo "Tanggal\tNama\tNIS\tKelas\tBuku\tStatus\n";
+    foreach ($data as $d) {
+        echo "{$d->tanggal_pinjam}\t{$d->nama}\t{$d->nis}\t{$d->nama_kelas}\t{$d->judul}\t{$d->status}\n";
+    }
+}
+public function peminjaman_pdf()
+{
+    $awal  = $this->input->get('awal');
+    $akhir = $this->input->get('akhir');
+
+    $data['awal'] = $awal;
+    $data['akhir'] = $akhir;
+
+    $data['laporan'] = $this->Peminjaman_model
+        ->get_laporan($awal, $akhir);
+
+    $html = $this->load->view('laporan/peminjaman_pdf', $data, true);
+
+    $this->load->library('pdf');
+    $this->pdf->loadHtml($html);
+    $this->pdf->setPaper('A4', 'potrait'); // landscape biar lega
+    $this->pdf->render();
+    $this->pdf->stream(
+        'laporan_peminjaman.pdf',
+        ['Attachment' => false]
+    );
+}
 
 }

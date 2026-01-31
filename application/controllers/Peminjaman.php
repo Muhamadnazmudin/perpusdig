@@ -82,7 +82,7 @@ class Peminjaman extends MY_Controller {
         'id_user'             => $id_user,
         'id_buku'             => $id_buku,
         'tanggal_pinjam'      => date('Y-m-d'),
-        'tanggal_jatuh_tempo' => date('Y-m-d', strtotime('+7 days')), /*ngarobah waktu pinjam +7 artina 7poe*/
+        'tanggal_jatuh_tempo' => date('Y-m-d', strtotime('+6 days')), /*ngarobah waktu pinjam +7 artina 7poe*/
         'status'              => 'dipinjam'
     ]);
 
@@ -121,7 +121,7 @@ public function setujui($id)
     // update status jadi dipinjam
     $this->Peminjaman_model->update($id, [
         'status' => 'dipinjam',
-        'tanggal_jatuh_tempo' => date('Y-m-d', strtotime('+7 days'))
+        'tanggal_jatuh_tempo' => date('Y-m-d', strtotime('+6 days'))
     ]);
 
     $this->session->set_flashdata('success', 'Peminjaman berhasil disetujui');

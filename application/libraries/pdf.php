@@ -2,6 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class Pdf {
 
@@ -9,10 +10,15 @@ class Pdf {
 
     public function __construct()
     {
-        // arahkan ke autoload dompdf di third_party
+        // autoload dompdf
         require_once APPPATH . 'third_party/dompdf/vendor/autoload.php';
 
-        $this->dompdf = new Dompdf();
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('chroot', FCPATH);
+
+        $this->dompdf = new Dompdf($options);
     }
 
     public function loadHtml($html)
