@@ -2,9 +2,10 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Login Siswa | Perpusdig</title>
+    <title>Login Admin | Perpusdig</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- STYLE SAMA PERSIS -->
     <style>
         *{box-sizing:border-box;font-family:'Segoe UI',sans-serif}
         body{
@@ -57,7 +58,7 @@
 
 <div class="login-card">
     <h2>Perpusdig</h2>
-    <p>Login Siswa Perpustakaan Digital</p>
+    <p>Login Admin Perpustakaan Digital</p>
 
     <?php if ($this->session->flashdata('error')): ?>
         <div class="alert-error">
@@ -65,27 +66,20 @@
         </div>
     <?php endif; ?>
 
-    <form method="post" action="<?= site_url('login') ?>">
+    <form method="post" action="<?= site_url('login/admin') ?>">
         <input type="hidden"
                name="<?= $this->security->get_csrf_token_name(); ?>"
                value="<?= $this->security->get_csrf_hash(); ?>">
 
         <div class="form-group">
-            <input type="text" name="username" placeholder="NIS / Username" required>
+            <input type="text" name="username" placeholder="Username Admin" required>
         </div>
 
         <div class="form-group">
             <input type="password" name="password" placeholder="Password" required>
         </div>
 
-        <div class="form-group">
-            <label style="font-size:13px;color:#555">
-                Berapa hasil dari <strong><?= $soal ?></strong> ?
-            </label>
-            <input type="number" name="captcha" placeholder="Jawaban" required>
-        </div>
-
-        <button type="submit" class="btn-login">Login Siswa</button>
+        <button type="submit" class="btn-login">Login Admin</button>
     </form>
 
     <div class="footer-text">
