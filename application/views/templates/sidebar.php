@@ -75,23 +75,40 @@ $role = (int) $this->user['id_role']; // 1=admin, 2=guru, 3=siswa
     </li>
 
     <hr class="sidebar-divider">
-    <div class="sidebar-heading">Pengaturan</div>
-    <?php if ($role === 1): ?>
-<li class="nav-item <?= ($this->uri->segment(1)=='backup')?'active':'' ?>">
-    <a class="nav-link" href="<?= site_url('backup') ?>">
-        <i class="fas fa-fw fa-database"></i>
-        <span>Backup & Restore</span>
+<div class="sidebar-heading">Pengaturan</div>
+
+<li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menuPengaturan"
+        aria-expanded="true" aria-controls="menuPengaturan">
+        <i class="fas fa-fw fa-cog"></i>
+        <span>Pengaturan</span>
     </a>
+
+    <div id="menuPengaturan"
+         class="collapse <?= in_array($this->uri->segment(2), ['sekolah']) ? 'show' : '' ?>">
+        <div class="bg-white py-2 collapse-inner rounded">
+
+            <!-- Pengaturan Sekolah -->
+            <a class="collapse-item <?= ($this->uri->segment(2) == 'sekolah') ? 'active' : '' ?>"
+               href="<?= site_url('pengaturan/sekolah') ?>">
+                <i class="fas fa-school mr-1"></i> Sekolah
+            </a>
+
+            <!-- Pengguna -->
+            <a class="collapse-item <?= ($this->uri->segment(1) == 'pengguna') ? 'active' : '' ?>"
+               href="<?= site_url('pengguna') ?>">
+                <i class="fas fa-users mr-1"></i> Pengguna
+            </a>
+
+            <!-- Backup -->
+            <a class="collapse-item <?= ($this->uri->segment(1) == 'backup') ? 'active' : '' ?>"
+               href="<?= site_url('backup') ?>">
+                <i class="fas fa-database mr-1"></i> Backup & Restore
+            </a>
+
+        </div>
+    </div>
 </li>
-<?php endif; ?>
-
-
-    <li class="nav-item">
-        <a class="nav-link" href="<?= site_url('pengguna') ?>">
-            <i class="fas fa-fw fa-users"></i>
-            <span>Pengguna</span>
-        </a>
-    </li>
 
     <?php endif; ?>
     <!-- =============== END ADMIN =============== -->
