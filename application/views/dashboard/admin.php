@@ -3,9 +3,28 @@
     <h1 class="h3 mb-4 text-gray-800">
         <i class="fas fa-tachometer-alt"></i> Dashboard Admin
     </h1>
+    <div class="d-flex align-items-center justify-content-between mb-4 p-3 bg-white shadow-sm rounded">
+    <div>
+        <h6 class="mb-0 text-danger font-weight-bold">
+            <i class="fas fa-tools"></i> Maintenance Mode
+        </h6>
+        <small class="text-muted">
+            Status:
+            <b class="<?= $maintenance_mode == '1' ? 'text-danger' : 'text-success' ?>">
+                <?= $maintenance_mode == '1' ? 'AKTIF' : 'NONAKTIF' ?>
+            </b>
+        </small>
+    </div>
+
+    <a href="<?= base_url('dashboard/toggle_maintenance') ?>"
+       class="btn btn-sm <?= $maintenance_mode == '1' ? 'btn-danger' : 'btn-success' ?>"
+       onclick="return confirm('Yakin ubah status maintenance?')">
+        <?= $maintenance_mode == '1' ? 'OFF' : 'ON' ?>
+    </a>
+</div>
+
 
     <div class="row">
-
         <!-- Buku Fisik -->
         <div class="col-xl-4 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">

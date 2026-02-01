@@ -19,6 +19,8 @@ class Dashboard extends MY_Controller {
 
     // ================= ADMIN =================
     if ($role === 1) {
+        $this->load->model('Settings_model');
+$data['maintenance_mode'] = $this->Settings_model->get('maintenance_mode');
 
         $data['stat'] = $this->Dashboard_model->get_stat_admin();
 
@@ -29,6 +31,7 @@ $this->load->view('templates/topbar', $this->data);
         $this->load->view('templates/footer');
         return;
     }
+    
 
     // ================= GURU =================
     if ($role === 2) {
@@ -58,6 +61,21 @@ $this->load->view('templates/topbar', $this->data);
 
     // kalau role aneh
     show_error('Role tidak dikenal', 403);
+}
+public function toggle_maintenance()
+{
+    if ($this->user['id_role'] != 1) {
+        show_error('Forbidden', 403);
+    }
+
+    $this->load->model('Settings_model');
+
+    $current = $this->Settings_model->get('maintenance_mode');
+    $new = ($current == '1') ? '0' : '1';
+
+    $this->Settings_model->set('maintenance_mode', $new);
+
+    redirect('dashboard');
 }
 
 }
