@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>Perpusdig | Perpustakaan SMKN 1 Cilimus</title>
     <!-- Open Graph / WhatsApp Preview -->
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://app.smkncilimus1.sch.id/perpusdig/">
 <meta property="og:title" content="Perpusdig – Perpustakaan Digital SMK Negeri 1 Cilimus">
