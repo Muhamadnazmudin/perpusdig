@@ -16,36 +16,49 @@ class Peminjaman extends MY_Controller {
     // LIST PEMINJAMAN
     // =======================
     public function index()
-    {
-        $this->only_role([1]);
-        $data['title'] = 'Peminjaman Buku';
-        $data['peminjaman'] = $this->Peminjaman_model->get_all();
-        $data['total_menunggu'] = $this->Peminjaman_model->count_menunggu();
-
-        $this->load->view('templates/header',$data);
-        $this->load->view('templates/sidebar');
-        $this->load->view('templates/topbar');
-        $this->load->view('peminjaman/index',$data);
-        $this->load->view('templates/footer');
-    }
-
-    // =======================
-    // FORM PINJAM
-    // =======================
-    public function tambah()
 {
     $this->only_role([1]);
 
-    $this->load->model('User_model');
+    $this->load->library('pagination');
+    $this->load->model('Kelas_model');
 
-    $data['title'] = 'Tambah Peminjaman';
-    $data['buku']  = $this->Buku_fisik_model->get_all();
-    $data['siswa'] = $this->User_model->get_siswa(); // ROLE = 3
+    $kelas   = $this->input->get('kelas');
+    $keyword = $this->input->get('q');
+    $page    = $this->input->get('page') ?? 0;
+    $limit   = 10;
+
+    $total = $this->Peminjaman_model
+        ->count_filtered($kelas, $keyword);
+
+    $config['base_url']   = site_url('peminjaman');
+    $config['total_rows'] = $total;
+    $config['per_page']   = $limit;
+    $config['reuse_query_string'] = true;
+
+    // Bootstrap pagination
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['num_tag_open'] = '<li class="page-item">';
+    $config['num_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="page-item active"><span class="page-link">';
+    $config['cur_tag_close'] = '</span></li>';
+    $config['attributes'] = ['class' => 'page-link'];
+
+    $this->pagination->initialize($config);
+
+    $data = [
+        'title'           => 'Peminjaman Buku',
+        'peminjaman'      => $this->Peminjaman_model
+                                ->get_filtered($limit, $page, $kelas, $keyword),
+        'total_menunggu'  => $this->Peminjaman_model->count_menunggu(),
+        'kelas'           => $this->Kelas_model->get_all(),
+        'pagination'      => $this->pagination->create_links()
+    ];
 
     $this->load->view('templates/header',$data);
-    $this->load->view('templates/sidebar');
-    $this->load->view('templates/topbar');
-    $this->load->view('peminjaman/tambah',$data);
+    $this->load->view('templates/sidebar', $this->data);
+    $this->load->view('templates/topbar', $this->data);
+    $this->load->view('peminjaman/index',$data);
     $this->load->view('templates/footer');
 }
 

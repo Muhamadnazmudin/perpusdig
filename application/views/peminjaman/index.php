@@ -21,12 +21,42 @@
 
     <div class="card shadow">
         <div class="card-body table-responsive">
+        <form method="get" class="mb-3">
+    <div class="row">
+        <div class="col-md-3">
+            <select name="kelas" class="form-control">
+                <option value="">-- Semua Kelas --</option>
+                <?php foreach ($kelas as $k): ?>
+                    <option value="<?= $k->id_kelas ?>"
+                        <?= $this->input->get('kelas') == $k->id_kelas ? 'selected' : '' ?>>
+                        <?= $k->nama_kelas ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <input type="text"
+                   name="q"
+                   class="form-control"
+                   placeholder="Cari nama siswa..."
+                   value="<?= htmlspecialchars($this->input->get('q')) ?>">
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-primary">
+                <i class="fas fa-search"></i> Filter
+            </button>
+        </div>
+    </div>
+</form>
 
             <table class="table table-bordered">
                 <thead class="thead-light">
                     <tr>
                         <th>No</th>
                         <th>Peminjam</th>
+                        <th>Kelas</th>
                         <th>Buku</th>
                         <th>Tgl Pinjam</th>
                         <th>Jatuh Tempo</th>
@@ -55,6 +85,7 @@
                     <tr>
                         <td><?= $no++ ?></td>
                         <td><?= htmlspecialchars($p->nama) ?></td>
+                        <td><?= htmlspecialchars($p->nama_kelas ?? '-') ?></td>
                         <td><?= htmlspecialchars($p->judul) ?></td>
                         <td><?= $p->tanggal_pinjam ?></td>
                         <td><?= $p->tanggal_jatuh_tempo ?></td>
@@ -119,7 +150,9 @@
                 <?php endforeach; ?>
                 </tbody>
             </table>
-
+        <div class="mt-3">
+        <?= $pagination ?>
+            </div>
         </div>
     </div>
 </div>

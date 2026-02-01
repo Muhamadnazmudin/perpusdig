@@ -182,6 +182,57 @@ public function get_pengajuan_buku($id_user, $id_buku)
         ->get('peminjaman')
         ->row();
 }
+public function get_filtered($limit, $offset, $kelas = null, $keyword = null)
+{
+    $this->db->select('
+        peminjaman.*,
+        buku_fisik.judul,
+        users.nama,
+        siswa.no_hp,
+        kelas.nama_kelas,
+        CASE
+            WHEN peminjaman.status = "dipinjam"
+             AND CURDATE() > peminjaman.tanggal_jatuh_tempo
+            THEN DATEDIFF(CURDATE(), peminjaman.tanggal_jatuh_tempo)
+            ELSE 0
+        END AS hari_terlambat
+    ');
+    $this->db->from('peminjaman');
+    $this->db->join('buku_fisik', 'buku_fisik.id_buku = peminjaman.id_buku');
+    $this->db->join('users', 'users.id_user = peminjaman.id_user');
+    $this->db->join('siswa', 'siswa.nis = users.username', 'left');
+    $this->db->join('kelas', 'kelas.id_kelas = siswa.id_kelas', 'left');
+
+    if (!empty($kelas)) {
+        $this->db->where('kelas.id_kelas', $kelas);
+    }
+
+    if (!empty($keyword)) {
+        $this->db->like('users.nama', $keyword);
+    }
+
+    $this->db->order_by('peminjaman.id_pinjam', 'DESC');
+    $this->db->limit($limit, $offset);
+
+    return $this->db->get()->result();
+}
+public function count_filtered($kelas = null, $keyword = null)
+{
+    $this->db->from('peminjaman');
+    $this->db->join('users', 'users.id_user = peminjaman.id_user');
+    $this->db->join('siswa', 'siswa.nis = users.username', 'left');
+    $this->db->join('kelas', 'kelas.id_kelas = siswa.id_kelas', 'left');
+
+    if (!empty($kelas)) {
+        $this->db->where('kelas.id_kelas', $kelas);
+    }
+
+    if (!empty($keyword)) {
+        $this->db->like('users.nama', $keyword);
+    }
+
+    return $this->db->count_all_results();
+}
 
 
 }
