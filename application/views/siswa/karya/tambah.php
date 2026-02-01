@@ -63,6 +63,28 @@
                         Maksimal 10MB, format PDF
                     </small>
                 </div>
+                <!-- COVER -->
+<div class="form-group">
+    <label>Cover Karya (opsional)</label>
+
+    <div class="mb-2">
+        <img src="<?= base_url('assets/img/no-cover.png') ?>"
+             id="cover-preview"
+             class="img-thumbnail"
+             style="max-height:150px">
+    </div>
+
+    <input type="file"
+           name="cover"
+           class="form-control-file"
+           accept="image/*"
+           onchange="previewCover(this)">
+
+    <small class="text-muted">
+        JPG / PNG, maksimal 2MB
+    </small>
+</div>
+
 
             </div>
 
@@ -81,3 +103,13 @@
     </form>
 
 </div>
+<script>
+function previewCover(input) {
+    const preview = document.getElementById('cover-preview');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => preview.src = e.target.result;
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>

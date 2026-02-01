@@ -1,4 +1,21 @@
 <div class="container-fluid">
+    <?php if ($this->session->flashdata('success')): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <?= $this->session->flashdata('success') ?>
+        <button type="button" class="close" data-dismiss="alert">
+            <span>&times;</span>
+        </button>
+    </div>
+<?php endif; ?>
+
+<?php if ($this->session->flashdata('error')): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <?= $this->session->flashdata('error') ?>
+        <button type="button" class="close" data-dismiss="alert">
+            <span>&times;</span>
+        </button>
+    </div>
+<?php endif; ?>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h5 text-gray-800 mb-0">
