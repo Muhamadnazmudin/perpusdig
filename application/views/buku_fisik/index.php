@@ -21,6 +21,24 @@
 
         <div class="card-body">
             <div class="table-responsive">
+                <form method="get" class="mb-3">
+    <div class="row">
+        <div class="col-md-4">
+            <input type="text"
+                   name="q"
+                   class="form-control"
+                   placeholder="Cari judul buku..."
+                   value="<?= htmlspecialchars($this->input->get('q')) ?>">
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-primary">
+                <i class="fas fa-search"></i> Cari
+            </button>
+        </div>
+    </div>
+</form>
+
 
                 <table class="table table-bordered table-hover">
                     <thead class="thead-light">
@@ -45,7 +63,12 @@
                             </td>
                         </tr>
                     <?php else: ?>
-                        <?php $no = 1; foreach ($buku as $row): ?>
+                        <?php
+$page = $this->input->get('page') ?? 0;
+$no = $page + 1;
+foreach ($buku as $row):
+?>
+
                         <tr>
 
                             <td><?= $no++ ?></td>
@@ -111,6 +134,9 @@
                     </tbody>
 
                 </table>
+                    <div class="mt-3">
+    <?= $pagination ?>
+</div>
 
             </div>
         </div>

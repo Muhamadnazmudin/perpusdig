@@ -11,16 +11,48 @@ class Buku_fisik extends MY_Controller {
     }
 
     public function index()
-    {
-        $data['title'] = 'Buku Fisik';
-        $data['buku']  = $this->Buku_fisik_model->get_all();
+{
+    $this->load->library('pagination');
 
-        $this->load->view('templates/header', $data);
-        $this->load->view('templates/sidebar');
-        $this->load->view('templates/topbar');
-        $this->load->view('buku_fisik/index', $data);
-        $this->load->view('templates/footer');
-    }
+    $keyword = $this->input->get('q');
+    $page    = $this->input->get('page');
+    $page    = (is_numeric($page)) ? $page : 0;
+    $limit   = 10;
+
+    $total = $this->Buku_fisik_model->count_filtered($keyword);
+
+    $config['base_url'] = site_url('buku-fisik');
+    $config['total_rows'] = $total;
+    $config['per_page'] = $limit;
+    $config['reuse_query_string'] = true;
+
+    // Bootstrap pagination
+    $config['full_tag_open'] = '<ul class="pagination justify-content-end">';
+    $config['full_tag_close'] = '</ul>';
+    $config['num_tag_open'] = '<li class="page-item">';
+    $config['num_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="page-item active"><span class="page-link">';
+    $config['cur_tag_close'] = '</span></li>';
+    $config['prev_tag_open'] = '<li class="page-item">';
+    $config['prev_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li class="page-item">';
+    $config['next_tag_close'] = '</li>';
+    $config['attributes'] = ['class' => 'page-link'];
+
+    $this->pagination->initialize($config);
+
+    $data['title'] = 'Buku Fisik';
+    $data['buku']  = $this->Buku_fisik_model
+                            ->get_filtered($limit, $page, $keyword);
+    $data['pagination'] = $this->pagination->create_links();
+
+    $this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar', $this->data);
+    $this->load->view('templates/topbar', $this->data);
+    $this->load->view('buku_fisik/index', $data);
+    $this->load->view('templates/footer');
+}
+
     public function tambah()
 {
     $this->load->model(['Kategori_model','Rak_model']);

@@ -27,6 +27,40 @@ class Buku_fisik_model extends CI_Model {
             ->get_where('buku_fisik', ['id_buku' => $id])
             ->row();
     }
+/* ================= PAGINATION + SEARCH ================= */
+
+public function get_filtered($limit, $offset, $keyword = null)
+{
+    $this->db
+        ->select('
+            buku_fisik.*,
+            kategori.nama_kategori,
+            rak.kode_rak
+        ')
+        ->from('buku_fisik')
+        ->join('kategori', 'kategori.id_kategori = buku_fisik.id_kategori', 'left')
+        ->join('rak', 'rak.id_rak = buku_fisik.id_rak', 'left');
+
+    if (!empty($keyword)) {
+        $this->db->like('buku_fisik.judul', $keyword);
+    }
+
+    $this->db->order_by('buku_fisik.judul', 'ASC');
+    $this->db->limit($limit, $offset);
+
+    return $this->db->get()->result();
+}
+
+public function count_filtered($keyword = null)
+{
+    $this->db->from('buku_fisik');
+
+    if (!empty($keyword)) {
+        $this->db->like('judul', $keyword);
+    }
+
+    return $this->db->count_all_results();
+}
 
     /* ================= INSERT ================= */
 
