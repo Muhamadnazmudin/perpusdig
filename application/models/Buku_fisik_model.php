@@ -281,5 +281,21 @@ public function get_rekap_paginated($limit, $offset)
         ->get()
         ->result();
 }
+public function get_ready()
+{
+    return $this->db
+        ->select('
+            buku_fisik.*,
+            kategori.nama_kategori,
+            rak.kode_rak
+        ')
+        ->from('buku_fisik')
+        ->join('kategori', 'kategori.id_kategori = buku_fisik.id_kategori', 'left')
+        ->join('rak', 'rak.id_rak = buku_fisik.id_rak', 'left')
+        ->where('buku_fisik.stok >', 0)
+        ->order_by('buku_fisik.judul', 'ASC')
+        ->get()
+        ->result();
+}
 
 }

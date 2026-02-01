@@ -63,6 +63,30 @@ class Peminjaman extends MY_Controller {
     $this->load->view('peminjaman/index',$data);
     $this->load->view('templates/footer');
 }
+// =======================
+// FORM TAMBAH PINJAMAN (ADMIN)
+// =======================
+public function tambah()
+{
+    $this->only_role([1]); // ADMIN
+
+    $this->load->model([
+        'User_model',
+        'Buku_fisik_model'
+    ]);
+
+    $data = [
+        'title' => 'Tambah Peminjaman',
+        'siswa' => $this->User_model->get_siswa(),
+        'buku'  => $this->Buku_fisik_model->get_ready()
+    ];
+
+    $this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar', $this->data);
+    $this->load->view('templates/topbar', $this->data);
+    $this->load->view('peminjaman/tambah', $data);
+    $this->load->view('templates/footer');
+}
 
 
     // =======================
