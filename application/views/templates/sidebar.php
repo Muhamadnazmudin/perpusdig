@@ -67,6 +67,7 @@ $role = (int) $this->user['id_role']; // 1=admin, 2=guru, 3=siswa
         <div id="menuBuku" class="collapse">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item" href="<?= site_url('buku-fisik') ?>">Data Buku</a>
+                <a class="collapse-item" href="<?= site_url('AdminKarya') ?>">Karya Siswa</a>
                 <a class="collapse-item" href="<?= site_url('buku-fisik/tambah') ?>">Tambah Buku</a>
                 <!-- 🔥 E-BOOK ADMIN -->
                 <a class="collapse-item" href="<?= site_url('AdminEbook') ?>">E-Book Digital</a>
@@ -228,6 +229,14 @@ $role = (int) $this->user['id_role']; // 1=admin, 2=guru, 3=siswa
             <span>E-Book</span>
         </a>
     </li>
+    <!-- 🔥      SISWA -->
+<li class="nav-item">
+    <a class="nav-link" href="<?= site_url('SiswaKarya') ?>">
+        <i class="fas fa-fw fa-pen-nib"></i>
+        <span>Karya Saya</span>
+    </a>
+</li>
+
 
     <li class="nav-item">
         <a class="nav-link" href="<?= site_url('peminjaman/daftar') ?>">

@@ -25,6 +25,7 @@
                 <option value="X"   <?= ($filter_kelas=='X')?'selected':'' ?>>X</option>
                 <option value="XI"  <?= ($filter_kelas=='XI')?'selected':'' ?>>XI</option>
                 <option value="XII" <?= ($filter_kelas=='XII')?'selected':'' ?>>XII</option>
+                <option value="UMUM" <?= ($filter_kelas=='UMUM')?'selected':'' ?>>UMUM</option>
             </select>
         </div>
 
@@ -95,13 +96,21 @@
                         <?php endif; ?>
 
                         <div class="card-body">
-                            <h6 class="card-title mb-1">
-                                <?= htmlspecialchars($e->judul) ?>
-                            </h6>
-                            <small class="text-muted">
-                                <?= htmlspecialchars($e->mapel) ?> · Kelas <?= htmlspecialchars($e->kelas) ?>
-                            </small>
-                        </div>
+                                <h6 class="card-title mb-1">
+                                    <?= htmlspecialchars($e->judul) ?>
+                                </h6>
+
+                                <?php if (!empty($e->penulis)): ?>
+                                    <div class="small text-primary mb-1">
+                                        ✍️ <?= htmlspecialchars($e->penulis) ?>
+                                    </div>
+                                <?php endif; ?>
+
+                                <small class="text-muted">
+                                    <?= htmlspecialchars($e->mapel) ?> · Kelas <?= htmlspecialchars($e->kelas) ?>
+                                </small>
+                            </div>
+
 
                         <div class="card-footer bg-white text-right">
                             <a href="<?= site_url('SiswaEbook/baca/'.$e->id_ebook) ?>"

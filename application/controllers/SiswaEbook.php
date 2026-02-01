@@ -8,105 +8,116 @@ class SiswaEbook extends MY_Controller {
         parent::__construct();
         $this->only_role([3]); // SISWA
         $this->load->model('Ebook_model');
-        $this->load->library('pagination');
         $this->load->model('Riwayat_model');
-
+        $this->load->library('pagination');
     }
 
+    /* ===================== INDEX ===================== */
     public function index()
-{
-    $kelas = $this->input->get('kelas', TRUE);
-    $mapel = $this->input->get('mapel', TRUE);
+    {
+        $kelas = $this->input->get('kelas', TRUE);
+        $mapel = $this->input->get('mapel', TRUE);
 
-    $limit  = 10;
-    $offset = $this->input->get('per_page') ?? 0;
+        $limit  = 10;
+        $offset = $this->input->get('per_page') ?? 0;
 
-    $total = $this->Ebook_model->count_filtered($kelas, $mapel);
+        // 🔐 model sudah difilter APPROVED + PUBLIC
+        $total = $this->Ebook_model
+                      ->count_filtered(null, $kelas, $mapel);
 
-    $config['base_url'] = site_url('SiswaEbook') . '?' . http_build_query([
-        'kelas' => $kelas,
-        'mapel' => $mapel
-    ]);
-    $config['total_rows'] = $total;
-    $config['per_page']  = $limit;
-    $config['page_query_string'] = TRUE;
+        $config['base_url'] = site_url('SiswaEbook') . '?' . http_build_query([
+            'kelas' => $kelas,
+            'mapel' => $mapel
+        ]);
+        $config['total_rows'] = $total;
+        $config['per_page']  = $limit;
+        $config['page_query_string'] = TRUE;
 
-    $this->pagination->initialize($config);
+        $this->pagination->initialize($config);
 
-    $data = [
-        'title'         => 'E-Book Digital',
-        'ebook'         => $this->Ebook_model->get_filtered($limit, $offset, $kelas, $mapel),
-        'pagination'    => $this->pagination->create_links(),
-        'mapel_list'    => $this->Ebook_model->get_mapel_unik(),
-        'filter_kelas'  => $kelas,
-        'filter_mapel'  => $mapel
-    ];
+        $data = [
+            'title'         => 'E-Book Digital',
+            'ebook'         => $this->Ebook_model
+                                    ->get_filtered($limit, $offset, null, $kelas, $mapel),
+            'pagination'    => $this->pagination->create_links(),
+            'mapel_list'    => $this->Ebook_model->get_mapel_unik(),
+            'filter_kelas'  => $kelas,
+            'filter_mapel'  => $mapel
+        ];
 
-    $this->load->view('templates/header', $data);
-    $this->load->view('templates/sidebar');
-    $this->load->view('templates/topbar');
-    $this->load->view('siswa/ebook/index', $data);
-    $this->load->view('templates/footer');
-}
-
-   public function baca($id)
-{
-    $this->only_role([3]); // SISWA
-
-    $ebook = $this->Ebook_model->get_by_id($id);
-    if (!$ebook) {
-        show_404();
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar');
+        $this->load->view('templates/topbar');
+        $this->load->view('siswa/ebook/index', $data);
+        $this->load->view('templates/footer');
     }
 
-    // ================= RIWAYAT BACA =================
-    $this->Riwayat_model->save_or_update(
-        $this->user['id_user'],
-        $id
-    );
-    // ================================================
+    /* ===================== BACA ===================== */
+    public function baca($id)
+    {
+        $this->only_role([3]);
 
-    $data['title'] = $ebook->judul;
-    $data['ebook'] = $ebook;
+        $ebook = $this->Ebook_model->get_by_id($id);
 
-    $this->load->view('templates/header', $data);
-    $this->load->view('templates/sidebar');
-    $this->load->view('templates/topbar');
-    $this->load->view('siswa/ebook/baca', $data);
-    $this->load->view('templates/footer');
-}
-public function riwayat()
-{
-    $this->only_role([3]);
+        // 🔐 BLOK AKSES JIKA BELUM APPROVED
+        if (
+            !$ebook ||
+            $ebook->status !== 'APPROVED' ||
+            (int)$ebook->is_public !== 1
+        ) {
+            show_404();
+        }
 
-    $data = [
-        'title' => 'Riwayat Bacaan Saya',
-        'ebook' => $this->Riwayat_model
-                        ->get_by_user($this->user['id_user'])
-    ];
+        // simpan riwayat baca
+        $this->Riwayat_model->save_or_update(
+            $this->user['id_user'],
+            $id
+        );
 
-    $this->load->view('templates/header',$data);
-    $this->load->view('templates/sidebar');
-    $this->load->view('templates/topbar');
-    $this->load->view('siswa/ebook/riwayat',$data);
-    $this->load->view('templates/footer');
-}
-public function favorit($id)
-{
-    $this->load->model('Favorit_model');
-    $this->Favorit_model->toggle($this->user['id_user'], $id);
-    redirect('SiswaEbook/baca/'.$id);
-}
-public function update_progress()
-{
-    $page = $this->input->post('page');
-    $id_ebook = $this->input->post('id_ebook');
+        $data['title'] = $ebook->judul;
+        $data['ebook'] = $ebook;
 
-    $this->Riwayat_model->update_progress(
-        $this->user['id_user'],
-        $id_ebook,
-        $page
-    );
-}
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar');
+        $this->load->view('templates/topbar');
+        $this->load->view('siswa/ebook/baca', $data);
+        $this->load->view('templates/footer');
+    }
 
+    /* ===================== RIWAYAT ===================== */
+    public function riwayat()
+    {
+        $data = [
+            'title' => 'Riwayat Bacaan Saya',
+            'ebook' => $this->Riwayat_model
+                            ->get_by_user($this->user['id_user'])
+        ];
 
+        $this->load->view('templates/header',$data);
+        $this->load->view('templates/sidebar');
+        $this->load->view('templates/topbar');
+        $this->load->view('siswa/ebook/riwayat',$data);
+        $this->load->view('templates/footer');
+    }
+
+    /* ===================== FAVORIT ===================== */
+    public function favorit($id)
+    {
+        $this->load->model('Favorit_model');
+        $this->Favorit_model->toggle($this->user['id_user'], $id);
+        redirect('SiswaEbook/baca/'.$id);
+    }
+
+    /* ===================== UPDATE PROGRESS ===================== */
+    public function update_progress()
+    {
+        $page     = $this->input->post('page');
+        $id_ebook = $this->input->post('id_ebook');
+
+        $this->Riwayat_model->update_progress(
+            $this->user['id_user'],
+            $id_ebook,
+            $page
+        );
+    }
 }
