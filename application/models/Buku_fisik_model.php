@@ -116,18 +116,39 @@ public function count_filtered($keyword = null)
 
     // 🔧 FIX: sebelumnya pakai kolom "kategori" (tidak ada)
     public function get_rekap()
-    {
-        return $this->db
-            ->select('
-                kategori.nama_kategori,
-                COUNT(buku_fisik.id_buku) AS total
-            ')
-            ->from('buku_fisik')
-            ->join('kategori', 'kategori.id_kategori = buku_fisik.id_kategori', 'left')
-            ->group_by('kategori.id_kategori')
-            ->get()
-            ->result();
-    }
+{
+    return $this->db
+        ->select('
+            bf.judul,
+            bf.isbn,
+            bf.penulis,
+            bf.penerbit,
+            bf.tahun,
+
+            SUM(bf.stok) AS stok_awal,
+
+            COALESCE(SUM(
+                CASE 
+                    WHEN p.status = "dipinjam" THEN 1 
+                    ELSE 0 
+                END
+            ), 0) AS dipinjam
+        ')
+        ->from('buku_fisik bf')
+        ->join('peminjaman p', 'p.id_buku = bf.id_buku', 'left')
+        ->group_by([
+            'bf.judul',
+            'bf.isbn',
+            'bf.penulis',
+            'bf.penerbit',
+            'bf.tahun'
+        ])
+        ->order_by('bf.judul', 'ASC')
+        ->get()
+        ->result();
+}
+
+
 public function cek_isbn($isbn)
 {
     return $this->db
@@ -212,6 +233,53 @@ public function count_filtered_siswa($kelas = null, $keyword = null)
     }
 
     return $this->db->count_all_results();
+}
+public function count_rekap()
+{
+    return $this->db
+        ->select('bf.judul')
+        ->from('buku_fisik bf')
+        ->group_by([
+            'bf.judul',
+            'bf.isbn',
+            'bf.penulis',
+            'bf.penerbit',
+            'bf.tahun'
+        ])
+        ->get()
+        ->num_rows();
+}
+public function get_rekap_paginated($limit, $offset)
+{
+    return $this->db
+        ->select('
+            bf.judul,
+            bf.isbn,
+            bf.penulis,
+            bf.penerbit,
+            bf.tahun,
+            SUM(bf.stok) AS stok_awal,
+
+            COALESCE(SUM(
+                CASE 
+                    WHEN p.status = "dipinjam" THEN 1 
+                    ELSE 0 
+                END
+            ), 0) AS dipinjam
+        ')
+        ->from('buku_fisik bf')
+        ->join('peminjaman p', 'p.id_buku = bf.id_buku', 'left')
+        ->group_by([
+            'bf.judul',
+            'bf.isbn',
+            'bf.penulis',
+            'bf.penerbit',
+            'bf.tahun'
+        ])
+        ->order_by('bf.judul', 'ASC')
+        ->limit($limit, $offset)
+        ->get()
+        ->result();
 }
 
 }

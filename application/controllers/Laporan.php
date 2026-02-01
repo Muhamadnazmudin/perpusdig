@@ -108,12 +108,67 @@ class Laporan extends MY_Controller {
     /* ================= LAPORAN TOTAL BUKU ================= */
     public function buku()
 {
+    $this->load->library('pagination');
+
+    $page  = $this->input->get('page');
+    $page  = is_numeric($page) ? $page : 0;
+    $limit = 20;
+
+    $total = $this->Buku_fisik_model->count_rekap();
+
+    // pagination config
+    $config['base_url'] = site_url('laporan/buku');
+    $config['total_rows'] = $total;
+    $config['per_page'] = $limit;
+    $config['reuse_query_string'] = true;
+    $config['page_query_string'] = true;
+    $config['query_string_segment'] = 'page';
+
+    // bootstrap tengah
+    $config['full_tag_open']  = '<ul class="pagination justify-content-center">';
+    $config['full_tag_close'] = '</ul>';
+    $config['num_tag_open']   = '<li class="page-item">';
+    $config['num_tag_close']  = '</li>';
+    $config['cur_tag_open']   = '<li class="page-item active"><span class="page-link">';
+    $config['cur_tag_close']  = '</span></li>';
+    $config['attributes']     = ['class' => 'page-link'];
+
+    $this->pagination->initialize($config);
+
     $data = [
-        'title' => 'Laporan Total Buku',
-        'buku'  => $this->Buku_fisik_model->get_rekap()
+        'title'      => 'Laporan Buku',
+        'buku'       => $this->Buku_fisik_model->get_rekap_paginated($limit, $page),
+        'pagination' => $this->pagination->create_links(),
+        'offset'     => $page
     ];
 
     $this->_view('laporan/buku', $data);
+}
+public function buku_excel()
+{
+    $data = $this->Buku_fisik_model->get_rekap_paginated(9999, 0);
+
+    header("Content-Type: application/vnd.ms-excel");
+    header("Content-Disposition: attachment; filename=laporan_buku.xls");
+
+    echo "Judul\tISBN\tPenulis\tPenerbit\tTahun\tStok Awal\tDipinjam\tSisa\n";
+
+    foreach ($data as $b) {
+        $sisa = $b->stok_awal - $b->dipinjam;
+        echo "{$b->judul}\t{$b->isbn}\t{$b->penulis}\t{$b->penerbit}\t{$b->tahun}\t{$b->stok_awal}\t{$b->dipinjam}\t{$sisa}\n";
+    }
+}
+public function buku_pdf()
+{
+    $data['buku'] = $this->Buku_fisik_model->get_rekap_paginated(9999, 0);
+
+    $html = $this->load->view('laporan/buku_pdf', $data, true);
+
+    $this->load->library('pdf');
+    $this->pdf->loadHtml($html);
+    $this->pdf->setPaper('A4', 'landscape');
+    $this->pdf->render();
+    $this->pdf->stream('laporan_buku.pdf', ['Attachment' => false]);
 }
 
 
