@@ -1,40 +1,121 @@
+/* =========================
+   BASE BACKGROUND
+========================= */
 body.theme-orange,
 .theme-orange #content-wrapper {
 	background-color: #fff3e6 !important;
 }
 
+/* =========================
+   SIDEBAR
+========================= */
 .theme-orange .sidebar,
 .theme-orange .bg-gradient-primary {
 	background-image: none !important;
 	background-color: #fd7e14 !important;
 }
 
+/* =========================
+   TOPBAR & FOOTER
+========================= */
 .theme-orange .topbar,
 .theme-orange .sticky-footer {
 	background-color: #ffffff !important;
 }
 
+/* =========================
+   CARD (GLOBAL)
+========================= */
 .theme-orange .card {
-	background-color: #ffffff;
-	border-left: 4px solid #fd7e14;
+	background-color: #ffffff !important;
+	box-shadow: 0 0.15rem 1.75rem rgba(0, 0, 0, 0.08);
 }
 
+/* CARD HEADER */
 .theme-orange .card-header {
 	background-color: #fff0e0;
+	border-bottom: 1px solid #ffd6ad;
 }
 
+/* =========================
+   DASHBOARD CARD BORDER LEFT
+========================= */
+.theme-orange .border-left-primary,
+.theme-orange .border-left-success,
+.theme-orange .border-left-info,
+.theme-orange .border-left-warning,
+.theme-orange .border-left-danger,
+.theme-orange .border-left-secondary {
+	border-left: 0.25rem solid #fd7e14 !important;
+	background-color: #ffffff !important;
+}
+
+/* =========================
+   TABLE
+========================= */
 .theme-orange .table thead th {
 	background-color: #ffe0c2;
 	color: #7a3e00;
+	border-color: #ffd6ad;
 }
 
+/* =========================
+   FORM
+========================= */
 .theme-orange .form-control:focus {
 	border-color: #fd7e14;
 	box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25);
 }
 
+/* =========================
+   BUTTON, BADGE, ALERT (FULL COLOR)
+========================= */
 .theme-orange .btn-primary,
-.theme-orange .badge-primary {
+.theme-orange .btn-success,
+.theme-orange .bg-primary,
+.theme-orange .bg-success,
+.theme-orange .alert-primary,
+.theme-orange .alert-success {
 	background-color: #fd7e14 !important;
 	border-color: #fd7e14 !important;
+	color: #fff;
+}
+
+.theme-orange .badge-primary {
+	background-color: #fd7e14;
+}
+
+/* =========================
+   OUTLINE BUTTON
+========================= */
+.theme-orange .btn-outline-primary,
+.theme-orange .btn-outline-success,
+.theme-orange .btn-outline-warning,
+.theme-orange .btn-outline-secondary {
+	color: #fd7e14 !important;
+	border-color: #fd7e14 !important;
+}
+
+.theme-orange .btn-outline-primary:hover,
+.theme-orange .btn-outline-success:hover,
+.theme-orange .btn-outline-warning:hover,
+.theme-orange .btn-outline-secondary:hover {
+	background-color: #fd7e14 !important;
+	color: #fff !important;
+}
+
+/* =========================
+   MODAL
+========================= */
+.theme-orange .modal-header {
+	background-color: #fd7e14 !important;
+	color: #fff;
+}
+
+/* =========================
+   TEXT
+========================= */
+.theme-orange .text-primary,
+.theme-orange .text-success {
+	color: #fd7e14 !important;
 }

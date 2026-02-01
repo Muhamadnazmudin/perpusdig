@@ -1,10 +1,7 @@
 /* =========================
    BASE BACKGROUND
 ========================= */
-body.theme-green {
-	background-color: #e9f7f1 !important; /* hijau soft */
-}
-
+body.theme-green,
 .theme-green #content-wrapper {
 	background-color: #e9f7f1 !important;
 }
@@ -27,17 +24,31 @@ body.theme-green {
 }
 
 /* =========================
-   CARD
+   CARD (GLOBAL)
 ========================= */
 .theme-green .card {
-	background-color: #ffffff;
-	border-left: 4px solid #1cc88a;
+	background-color: #ffffff !important;
 	box-shadow: 0 0.15rem 1.75rem rgba(0, 0, 0, 0.08);
 }
 
+/* HEADER CARD */
 .theme-green .card-header {
 	background-color: #f1fcf7;
 	border-bottom: 1px solid #c7efdd;
+}
+
+/* =========================
+   DASHBOARD CARD BORDER LEFT
+   (INI YANG PENTING)
+========================= */
+.theme-green .border-left-primary,
+.theme-green .border-left-success,
+.theme-green .border-left-info,
+.theme-green .border-left-warning,
+.theme-green .border-left-danger,
+.theme-green .border-left-secondary {
+	border-left: 0.25rem solid #1cc88a !important;
+	background-color: #ffffff !important;
 }
 
 /* =========================
@@ -62,11 +73,17 @@ body.theme-green {
 }
 
 /* =========================
-   BUTTON & BADGE
+   BUTTON & BADGE (FULL WARNA)
 ========================= */
-.theme-green .btn-primary {
+.theme-green .btn-primary,
+.theme-green .btn-success,
+.theme-green .bg-success,
+.theme-green .bg-primary,
+.theme-green .alert-success,
+.theme-green .alert-primary {
 	background-color: #1cc88a !important;
 	border-color: #1cc88a !important;
+	color: #fff;
 }
 
 .theme-green .badge-primary {
@@ -74,8 +91,36 @@ body.theme-green {
 }
 
 /* =========================
+   OUTLINE BUTTON (TUJUAN, DLL)
+========================= */
+.theme-green .btn-outline-primary,
+.theme-green .btn-outline-success,
+.theme-green .btn-outline-warning,
+.theme-green .btn-outline-secondary {
+	color: #1cc88a !important;
+	border-color: #1cc88a !important;
+}
+
+.theme-green .btn-outline-primary:hover,
+.theme-green .btn-outline-success:hover,
+.theme-green .btn-outline-warning:hover,
+.theme-green .btn-outline-secondary:hover {
+	background-color: #1cc88a !important;
+	color: #fff !important;
+}
+
+/* =========================
+   MODAL
+========================= */
+.theme-green .modal-header {
+	background-color: #1cc88a !important;
+	color: #fff;
+}
+
+/* =========================
    TEXT
 ========================= */
-.theme-green .text-primary {
+.theme-green .text-primary,
+.theme-green .text-success {
 	color: #1cc88a !important;
 }
