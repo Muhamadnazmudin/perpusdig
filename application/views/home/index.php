@@ -5,21 +5,16 @@
     <title>Perpusdig | Perpustakaan SMKN 1 Cilimus</title>
     <!-- Open Graph / WhatsApp Preview -->
 <meta property="og:type" content="website">
-<meta property="og:url" content="<?= base_url() ?>">
+<meta property="og:url" content="https://app.smkncilimus1.sch.id/perpusdig/">
 <meta property="og:title" content="Perpusdig – Perpustakaan Digital SMK Negeri 1 Cilimus">
 <meta property="og:description" content="Perpusdig merupakan aplikasi perpustakaan digital yang modern, diperuntukkan untuk pengelolaan buku, peminjaman, kunjungan, dan literasi siswa secara terintegrasi.">
-<meta property="og:image" content="<?= base_url('assets/img/logobispar.png') ?>">
+<meta property="og:image" content="https://app.smkncilimus1.sch.id/perpusdig/assets/img/logobispar.png">
 
-<!-- Optional tapi disarankan -->
 <meta property="og:site_name" content="Perpusdig">
 <meta property="og:locale" content="id_ID">
 
-<!-- Twitter (biar sekalian rapi) -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Perpusdig – Perpustakaan Digital SMK Negeri 1 Cilimus">
-<meta name="twitter:description" content="Aplikasi perpustakaan digital modern untuk mendukung literasi dan manajemen perpustakaan sekolah.">
-<meta name="twitter:image" content="<?= base_url('assets/img/logobispar.png') ?>">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="twitter:image" content="https://app.smkncilimus1.sch.id/perpusdig/assets/img/logobispar.png">
 
     <style>
         * {
