@@ -81,78 +81,109 @@ class Siswa extends MY_Controller {
      * ========================================================= */
     public function tambah()
 {
-    $nis   = $this->input->post('nis');
+    $nis        = $this->input->post('nis');
+    $nama       = $this->input->post('nama_siswa');
+    $id_kelas   = $this->input->post('id_kelas');
+    $id_jurusan = $this->input->post('id_jurusan');
 
-    // === TARUH DI SINI ===
-    $no_hp = $this->input->post('no_hp');
-
-    // normalisasi no HP
-    $no_hp = preg_replace('/[^0-9]/', '', $no_hp);
+    // ===== NO HP =====
+    $no_hp = preg_replace('/[^0-9]/', '', $this->input->post('no_hp'));
     if (substr($no_hp, 0, 1) == '0') {
         $no_hp = '62' . substr($no_hp, 1);
     }
-    // === SAMPAI SINI ===
 
+    // ===== RFID =====
+    $rfid_uid = trim($this->input->post('rfid_uid'));
+    $rfid_uid = $rfid_uid === '' ? null : $rfid_uid;
+
+    // 🔒 cek RFID dobel
+    if ($rfid_uid) {
+        if ($this->db->get_where('siswa', ['rfid_uid' => $rfid_uid])->row()) {
+            $this->session->set_flashdata('error', 'RFID sudah digunakan siswa lain');
+            redirect('siswa');
+            return;
+        }
+    }
+
+    // ===== INSERT SISWA =====
     $this->db->insert('siswa', [
         'nis'        => $nis,
-        'nama_siswa' => $this->input->post('nama_siswa'),
+        'nama_siswa' => $nama,
         'no_hp'      => $no_hp,
-        'id_kelas'   => $this->input->post('id_kelas'),
-        'id_jurusan' => $this->input->post('id_jurusan')
+        'id_kelas'   => $id_kelas,
+        'id_jurusan' => $id_jurusan,
+        'rfid_uid'   => $rfid_uid
     ]);
 
-        $id_siswa = $this->db->insert_id();
+    $id_siswa = $this->db->insert_id();
 
-        // generate QR (sekali)
-        $qr = $this->generate_qr_siswa($id_siswa, $nis);
+    // ===== GENERATE QR =====
+    $qr = $this->generate_qr_siswa($id_siswa, $nis);
 
-$this->db->where('id_siswa', $id_siswa)
-         ->update('siswa', [
-             'qr_code'  => $qr['path'],
-             'qr_token' => $qr['token']
-         ]);
+    $this->db->where('id_siswa', $id_siswa)->update('siswa', [
+        'qr_code'  => $qr['path'],
+        'qr_token' => $qr['token']
+    ]);
 
+    // ===== AKUN LOGIN =====
+    $this->db->insert('users', [
+        'id_role'  => 3,
+        'username' => $nis,
+        'password' => password_hash($nis, PASSWORD_DEFAULT),
+        'nama'     => $nama,
+        'status'   => 'aktif'
+    ]);
 
-        // akun login
-        $this->db->insert('users', [
-            'id_role'  => 3,
-            'username' => $nis,
-            'password' => password_hash($nis, PASSWORD_DEFAULT),
-            'nama'     => $this->input->post('nama_siswa'),
-            'status'   => 'aktif'
-        ]);
+    $this->session->set_flashdata('success', 'Siswa berhasil ditambahkan');
+    redirect('siswa');
+}
 
-        $this->session->set_flashdata('success', 'Siswa berhasil ditambahkan');
-        redirect('siswa');
-    }
 
     /* =========================================================
      * EDIT SISWA (QR TIDAK DIUBAH)
      * ========================================================= */
     public function edit()
 {
-    $id    = $this->input->post('id_siswa');
-    $no_hp = $this->input->post('no_hp');
+    $id         = $this->input->post('id_siswa');
+    $nis        = $this->input->post('nis');
+    $nama       = $this->input->post('nama_siswa');
+    $id_kelas   = $this->input->post('id_kelas');
+    $id_jurusan = $this->input->post('id_jurusan');
 
-    // normalisasi no HP
-    $no_hp = preg_replace('/[^0-9]/', '', $no_hp);
+    // ===== NO HP =====
+    $no_hp = preg_replace('/[^0-9]/', '', $this->input->post('no_hp'));
     if (substr($no_hp, 0, 1) == '0') {
         $no_hp = '62' . substr($no_hp, 1);
     }
 
-    $this->db->where('id_siswa', $id)
-             ->update('siswa', [
-                 'nis'        => $this->input->post('nis'),
-                 'nama_siswa' => $this->input->post('nama_siswa'),
-                 'no_hp'      => $no_hp,
-                 'id_kelas'   => $this->input->post('id_kelas'),
-                 'id_jurusan' => $this->input->post('id_jurusan')
-             ]);
+    // ===== RFID =====
+    $rfid_uid = trim($this->input->post('rfid_uid'));
+    $rfid_uid = $rfid_uid === '' ? null : $rfid_uid;
 
-    $this->session->set_flashdata('success', 'Data siswa diperbarui');
+    // 🔒 cek RFID dobel (kecuali milik sendiri)
+    if ($rfid_uid) {
+        $this->db->where('rfid_uid', $rfid_uid);
+        $this->db->where('id_siswa !=', $id);
+        if ($this->db->get('siswa')->row()) {
+            $this->session->set_flashdata('error', 'RFID sudah digunakan siswa lain');
+            redirect('siswa');
+            return;
+        }
+    }
+
+    // ===== UPDATE SISWA =====
+    $this->db->where('id_siswa', $id)->update('siswa', [
+        'nis'        => $nis,
+        'nama_siswa' => $nama,
+        'no_hp'      => $no_hp,
+        'id_kelas'   => $id_kelas,
+        'id_jurusan' => $id_jurusan,
+        'rfid_uid'   => $rfid_uid
+    ]);
+
+    $this->session->set_flashdata('success', 'Data siswa berhasil diperbarui');
     redirect('siswa');
 }
-
 
     /* =========================================================
      * HAPUS SISWA

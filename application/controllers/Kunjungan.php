@@ -62,6 +62,48 @@ class Kunjungan extends MY_Controller {
         'jam'    => date('H:i:s')
     ]);
 }
+// dipanggil oleh scan RFID
+public function scan_rfid()
+{
+    $uid = $this->input->post('rfid_uid', true);
+
+    if (!$uid) {
+        echo json_encode([
+            'status' => false,
+            'msg'    => 'RFID kosong'
+        ]);
+        return;
+    }
+
+    $siswa = $this->db
+        ->select('
+            siswa.id_siswa,
+            siswa.nis,
+            siswa.nama_siswa,
+            kelas.nama_kelas,
+            jurusan.nama_jurusan
+        ')
+        ->join('kelas','kelas.id_kelas=siswa.id_kelas')
+        ->join('jurusan','jurusan.id_jurusan=siswa.id_jurusan')
+        ->where('siswa.rfid_uid', $uid)
+        ->get('siswa')
+        ->row();
+
+    if (!$siswa) {
+        echo json_encode([
+            'status' => false,
+            'msg'    => 'RFID tidak terdaftar'
+        ]);
+        return;
+    }
+
+    echo json_encode([
+        'status' => true,
+        'siswa'  => $siswa,
+        'jam'    => date('H:i:s')
+    ]);
+}
+
 public function simpan()
 {
     $data = [

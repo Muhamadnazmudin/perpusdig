@@ -39,6 +39,13 @@
                     <input type="text" name="no_hp" class="form-control" placeholder="No HP" required>
                     </div>
                     <div class="col-md-2 mb-2">
+        <input type="text"
+               name="rfid_uid"
+               class="form-control"
+               placeholder="Scan RFID"
+               autocomplete="off">
+    </div>
+                    <div class="col-md-2 mb-2">
                         <select name="id_kelas" class="form-control" required>
                             <option value="">- Kelas -</option>
                             <?php foreach($kelas as $k): ?>
@@ -140,6 +147,7 @@
                             <th>Nama</th>
                             <th>Kelas</th>
                             <th>Jurusan</th>
+                            <th width="140">RFID</th>
                             <th width="80">QR</th>
                             <th width="110">Aksi</th>
                         </tr>
@@ -157,6 +165,14 @@ foreach($siswa as $s):
                             <td><?= htmlspecialchars($s->nama_siswa) ?></td>
                             <td><?= htmlspecialchars($s->nama_kelas) ?></td>
                             <td><?= htmlspecialchars($s->nama_jurusan) ?></td>
+                            <td class="text-center">
+    <?php if($s->rfid_uid): ?>
+        <span class="badge badge-success"><?= $s->rfid_uid ?></span>
+    <?php else: ?>
+        <span class="badge badge-secondary">Belum</span>
+    <?php endif ?>
+</td>
+
                             <td class="text-center">
                                 <?php if($s->qr_code): ?>
                                     <img src="<?= base_url($s->qr_code) ?>" width="55">
@@ -218,6 +234,19 @@ foreach($siswa as $s):
                                placeholder="08xxxxxxxxxx"
                                required>
                     </div>
+                    <!-- ✅ RFID -->
+<div class="form-group">
+    <label>RFID UID</label>
+    <input type="text"
+           name="rfid_uid"
+           class="form-control"
+           value="<?= $s->rfid_uid ?>"
+           placeholder="Scan kartu RFID"
+           autocomplete="off">
+    <small class="text-muted">
+        Klik kolom lalu tempel kartu
+    </small>
+</div>
 
                     <div class="form-group">
                         <label>Kelas</label>
