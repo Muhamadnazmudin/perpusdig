@@ -6,6 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <title><?= $title ?? 'Perpusdig' ?></title>
+    <!-- Open Graph / WhatsApp Preview -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="<?= base_url() ?>">
+<meta property="og:title" content="Perpusdig – Perpustakaan Digital SMK Negeri 1 Cilimus">
+<meta property="og:description" content="Perpusdig merupakan aplikasi perpustakaan digital yang modern, diperuntukkan untuk pengelolaan buku, peminjaman, kunjungan, dan literasi siswa secara terintegrasi.">
+<meta property="og:image" content="<?= base_url('assets/img/logobispar.png') ?>">
+
+<!-- Optional tapi disarankan -->
+<meta property="og:site_name" content="Perpusdig">
+<meta property="og:locale" content="id_ID">
+
+<!-- Twitter (biar sekalian rapi) -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Perpusdig – Perpustakaan Digital SMK Negeri 1 Cilimus">
+<meta name="twitter:description" content="Aplikasi perpustakaan digital modern untuk mendukung literasi dan manajemen perpustakaan sekolah.">
+<meta name="twitter:image" content="<?= base_url('assets/img/logobispar.png') ?>">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="<?= base_url('assets/img/logobispar.png') ?>">
+    <link rel="shortcut icon" href="<?= base_url('assets/img/logobispar.png') ?>">
+    <link rel="apple-touch-icon" href="<?= base_url('assets/img/logobispar.png') ?>">
 
     <!-- Font Awesome -->
     <link href="<?= base_url('assets/sbadmin2/vendor/fontawesome-free/css/all.min.css') ?>" rel="stylesheet">
