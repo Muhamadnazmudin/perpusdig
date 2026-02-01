@@ -149,5 +149,69 @@ public function isbn_exists($isbn, $exclude_id = null)
 
     return $this->db->get('buku_fisik')->row();
 }
+/* ================= LIST KELAS DARI BUKU ================= */
+
+public function get_list_kelas()
+{
+    return $this->db
+        ->select('kelas')
+        ->from('buku_fisik')
+        ->where('kelas IS NOT NULL')
+        ->group_by('kelas')
+        ->order_by('kelas', 'ASC')
+        ->get()
+        ->result();
+}
+/* ================= FILTER BUKU SISWA ================= */
+
+public function get_filtered_siswa($kelas = null, $keyword = null, $limit = null, $offset = null)
+{
+    $this->db
+        ->select('
+            buku_fisik.*,
+            kategori.nama_kategori,
+            rak.kode_rak
+        ')
+        ->from('buku_fisik')
+        ->join('kategori', 'kategori.id_kategori = buku_fisik.id_kategori', 'left')
+        ->join('rak', 'rak.id_rak = buku_fisik.id_rak', 'left');
+
+    if (!empty($kelas)) {
+        $this->db->where('buku_fisik.kelas', $kelas);
+    }
+
+    if (!empty($keyword)) {
+        $this->db->group_start();
+        $this->db->like('buku_fisik.judul', $keyword);
+        $this->db->or_like('buku_fisik.penulis', $keyword);
+        $this->db->group_end();
+    }
+
+    if ($limit !== null) {
+        $this->db->limit($limit, $offset);
+    }
+
+    return $this->db
+        ->order_by('buku_fisik.judul', 'ASC')
+        ->get()
+        ->result();
+}
+public function count_filtered_siswa($kelas = null, $keyword = null)
+{
+    $this->db->from('buku_fisik');
+
+    if (!empty($kelas)) {
+        $this->db->where('kelas', $kelas);
+    }
+
+    if (!empty($keyword)) {
+        $this->db->group_start();
+        $this->db->like('judul', $keyword);
+        $this->db->or_like('penulis', $keyword);
+        $this->db->group_end();
+    }
+
+    return $this->db->count_all_results();
+}
 
 }

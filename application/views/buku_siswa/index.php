@@ -8,6 +8,39 @@
 <div class="container-fluid">
 
     <h1 class="h3 mb-4 text-gray-800"><?= $title ?></h1>
+    <!-- FILTER & SEARCH -->
+<form method="get" action="<?= current_url() ?>" class="mb-4">
+    <div class="row align-items-end">
+        <div class="col-md-4">
+            <label class="small font-weight-bold">Filter Kelas</label>
+            <select name="kelas" class="form-control">
+    <option value="">-- Semua Kelas --</option>
+    <?php foreach ($kelas as $k): ?>
+        <option value="<?= htmlspecialchars($k->kelas) ?>"
+            <?= ($this->input->get('kelas') == $k->kelas) ? 'selected' : '' ?>>
+            <?= htmlspecialchars($k->kelas) ?>
+        </option>
+    <?php endforeach ?>
+</select>
+
+        </div>
+
+        <div class="col-md-5">
+            <label class="small font-weight-bold">Cari Judul / Penulis</label>
+            <input type="text"
+                   name="q"
+                   class="form-control"
+                   placeholder="Ketik judul atau penulis..."
+                   value="<?= htmlspecialchars($this->input->get('q')) ?>">
+        </div>
+
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary btn-block">
+                <i class="fas fa-search"></i> Tampilkan
+            </button>
+        </div>
+    </div>
+</form>
 
     <div class="row">
 
@@ -46,6 +79,7 @@
 
             </div>
         </div>
+        
 
         <!-- ================= MODAL FULL COVER ================= -->
         <div class="modal fade" id="cover<?= $b->id_buku ?>" tabindex="-1" role="dialog">
@@ -73,6 +107,21 @@
         <!-- ================= END MODAL ================= -->
 
         <?php endforeach ?>
+        <?php if (!empty($pagination)): ?>
+    <div class="col-12 mt-4">
+        <?= $pagination ?>
+    </div>
+<?php endif ?>
+
+        <?php if (empty($buku)): ?>
+    <div class="col-12">
+        <div class="alert alert-warning text-center">
+            <i class="fas fa-book-open"></i><br>
+            Buku tidak ditemukan.
+        </div>
+    </div>
+<?php endif ?>
+
 
     </div>
 </div>

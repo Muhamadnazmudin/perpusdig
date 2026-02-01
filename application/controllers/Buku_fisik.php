@@ -29,8 +29,8 @@ class Buku_fisik extends MY_Controller {
     $config['query_string_segment'] = 'page';
 
     // Bootstrap pagination
-    $config['full_tag_open']  = '<ul class="pagination justify-content-center">';
-    $config['full_tag_close'] = '</ul>';
+    $config['full_tag_open'] = '<nav class="d-flex justify-content-center"><ul class="pagination">';
+    $config['full_tag_close'] = '</ul></nav>';
     $config['num_tag_open'] = '<li class="page-item">';
     $config['num_tag_close'] = '</li>';
     $config['cur_tag_open'] = '<li class="page-item active"><span class="page-link">';

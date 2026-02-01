@@ -18,7 +18,7 @@ class SiswaEbook extends MY_Controller {
         $kelas = $this->input->get('kelas', TRUE);
         $mapel = $this->input->get('mapel', TRUE);
 
-        $limit  = 10;
+        $limit  = 9;
         $offset = $this->input->get('per_page') ?? 0;
 
         // 🔐 model sudah difilter APPROVED + PUBLIC
@@ -26,12 +26,24 @@ class SiswaEbook extends MY_Controller {
                       ->count_filtered(null, $kelas, $mapel);
 
         $config['base_url'] = site_url('SiswaEbook') . '?' . http_build_query([
-            'kelas' => $kelas,
-            'mapel' => $mapel
-        ]);
-        $config['total_rows'] = $total;
-        $config['per_page']  = $limit;
-        $config['page_query_string'] = TRUE;
+    'kelas' => $kelas,
+    'mapel' => $mapel
+]);
+$config['total_rows'] = $total;
+$config['per_page']  = $limit;
+$config['page_query_string'] = TRUE;
+
+// 🔥 TAMBAHAN UNTUK TENGAH
+$config['full_tag_open']  = '<nav class="d-flex justify-content-center"><ul class="pagination">';
+$config['full_tag_close'] = '</ul></nav>';
+$config['attributes']     = ['class' => 'page-link'];
+$config['num_tag_open']   = '<li class="page-item">';
+$config['num_tag_close']  = '</li>';
+$config['cur_tag_open']   = '<li class="page-item active"><span class="page-link">';
+$config['cur_tag_close']  = '</span></li>';
+
+$this->pagination->initialize($config);
+
 
         $this->pagination->initialize($config);
 
