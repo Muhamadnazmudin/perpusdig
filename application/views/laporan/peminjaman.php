@@ -74,7 +74,12 @@
                     </tr>
                 <?php endif; ?>
 
-                <?php $no=1; foreach ($laporan as $row): ?>
+                <?php
+                    $page = $this->input->get('page') ?? 0;
+                    $no = $page + 1;
+                    foreach ($laporan as $row):
+                    ?>
+
                     <tr>
                         <td><?= $no++ ?></td>
                         <td><?= date('d-m-Y', strtotime($row->tanggal_pinjam)) ?></td>
@@ -117,6 +122,10 @@
 
                 </tbody>
             </table>
+            <div class="mt-3 d-flex justify-content-center">
+    <?= $pagination ?>
+</div>
+
 
         </div>
     </div>

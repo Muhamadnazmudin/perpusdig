@@ -106,7 +106,12 @@
                         </tr>
                     <?php endif ?>
 
-                    <?php $no = 1; foreach($laporan as $l): ?>
+                    <?php
+                        $page = $this->input->get('page') ?? 0;
+                        $no = $page + 1;
+                        foreach($laporan as $l):
+                        ?>
+
                     <tr>
                         <td class="text-center"><?= $no++ ?></td>
                         <td><?= $l->tanggal ?></td>
@@ -123,7 +128,9 @@
 
                 </tbody>
             </table>
-
+            <div class="mt-3 d-flex justify-content-center">
+            <?= $pagination ?>
+            </div>
         </div>
     </div>
 

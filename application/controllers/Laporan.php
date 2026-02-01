@@ -17,29 +17,93 @@ class Laporan extends MY_Controller {
     /* ================= LAPORAN KUNJUNGAN ================= */
     public function kunjungan()
 {
+    $this->load->library('pagination');
+
+    $filter = $this->input->get();
+
+    $page  = $this->input->get('page');
+    $page  = is_numeric($page) ? $page : 0;
+    $limit = 10;
+
+    $total = $this->Kunjungan_model->count_laporan($filter);
+
+    // ===== CONFIG PAGINATION =====
+    $config['base_url'] = site_url('laporan/kunjungan');
+    $config['total_rows'] = $total;
+    $config['per_page'] = $limit;
+    $config['reuse_query_string'] = true;
+    $config['page_query_string'] = true;
+    $config['query_string_segment'] = 'page';
+
+    // bootstrap + tengah
+    $config['full_tag_open']  = '<ul class="pagination justify-content-center">';
+    $config['full_tag_close'] = '</ul>';
+    $config['num_tag_open']   = '<li class="page-item">';
+    $config['num_tag_close']  = '</li>';
+    $config['cur_tag_open']   = '<li class="page-item active"><span class="page-link">';
+    $config['cur_tag_close']  = '</span></li>';
+    $config['attributes']     = ['class'=>'page-link'];
+
+    $this->pagination->initialize($config);
+
     $data = [
-        'title'   => 'Laporan Kunjungan',
-        'kelas'   => $this->db->get('kelas')->result(),
-        'jurusan' => $this->db->get('jurusan')->result(),
-        'laporan' => $this->Kunjungan_model->filter_laporan(
-            $this->input->get()
-        )
+        'title'      => 'Laporan Kunjungan',
+        'kelas'      => $this->db->get('kelas')->result(),
+        'jurusan'    => $this->db->get('jurusan')->result(),
+        'laporan'    => $this->Kunjungan_model
+                                ->get_laporan_paginated($limit, $page, $filter),
+        'pagination' => $this->pagination->create_links()
     ];
 
     $this->_view('laporan/kunjungan', $data);
 }
 
-
     /* ================= LAPORAN PEMINJAMAN ================= */
     public function peminjaman()
-    {
-        $data = [
-            'title'   => 'Laporan Peminjaman',
-            'laporan' => $this->Peminjaman_model->get_laporan()
-        ];
+{
+    $this->load->library('pagination');
 
-        $this->_view('laporan/peminjaman', $data);
-    }
+    $awal  = $this->input->get('awal');
+    $akhir = $this->input->get('akhir');
+
+    $page  = $this->input->get('page');
+    $page  = is_numeric($page) ? $page : 0;
+    $limit = 15;
+
+    $total = $this->Peminjaman_model
+        ->count_laporan_peminjaman($awal, $akhir);
+
+    // ===== CONFIG PAGINATION =====
+    $config['base_url'] = site_url('laporan/peminjaman');
+    $config['total_rows'] = $total;
+    $config['per_page'] = $limit;
+    $config['reuse_query_string'] = true;
+    $config['page_query_string'] = true;
+    $config['query_string_segment'] = 'page';
+
+    // bootstrap + tengah
+    $config['full_tag_open']  = '<ul class="pagination justify-content-center">';
+    $config['full_tag_close'] = '</ul>';
+    $config['num_tag_open']   = '<li class="page-item">';
+    $config['num_tag_close']  = '</li>';
+    $config['cur_tag_open']   = '<li class="page-item active"><span class="page-link">';
+    $config['cur_tag_close']  = '</span></li>';
+    $config['attributes']     = ['class'=>'page-link'];
+
+    $this->pagination->initialize($config);
+
+    $data = [
+        'title'      => 'Laporan Peminjaman',
+        'laporan'    => $this->Peminjaman_model
+                                ->get_laporan_peminjaman_paginated(
+                                    $limit, $page, $awal, $akhir
+                                ),
+        'pagination' => $this->pagination->create_links()
+    ];
+
+    $this->_view('laporan/peminjaman', $data);
+}
+
 
     /* ================= LAPORAN TOTAL BUKU ================= */
     public function buku()
