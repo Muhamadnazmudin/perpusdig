@@ -42,19 +42,29 @@ $role = (int) $this->user['id_role']; // 1=admin, 2=guru, 3=siswa
     </li>
 
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menuAkademik">
-            <i class="fas fa-fw fa-school"></i>
-            <span>Data Akademik</span>
-        </a>
-        <div id="menuAkademik" class="collapse">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="<?= site_url('kelas') ?>">Kelas</a>
-                <a class="collapse-item" href="<?= site_url('jurusan') ?>">Jurusan</a>
-                <a class="collapse-item" href="<?= site_url('guru') ?>">Guru</a>
-                <a class="collapse-item" href="<?= site_url('siswa') ?>">Siswa</a>
-            </div>
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menuAkademik">
+        <i class="fas fa-fw fa-school"></i>
+        <span>Data Akademik</span>
+    </a>
+    <div id="menuAkademik" class="collapse">
+        <div class="bg-white py-2 collapse-inner rounded">
+
+            <a class="collapse-item" href="<?= site_url('kelas') ?>">Kelas</a>
+            <a class="collapse-item" href="<?= site_url('jurusan') ?>">Jurusan</a>
+            <a class="collapse-item" href="<?= site_url('guru') ?>">Guru</a>
+            <a class="collapse-item" href="<?= site_url('siswa') ?>">Siswa</a>
+
+            <!-- 🔥 MAPPING RFID -->
+            <div class="dropdown-divider"></div>
+            <a class="collapse-item font-weight-bold text-primary"
+               href="<?= site_url('mapping_rfid') ?>">
+                <i class="fas fa-id-card mr-1"></i> Mapping RFID Siswa
+            </a>
+
         </div>
-    </li>
+    </div>
+</li>
+
 
     <hr class="sidebar-divider">
     <div class="sidebar-heading">Buku</div>
