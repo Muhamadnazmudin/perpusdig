@@ -77,34 +77,71 @@ $config['attributes'] = ['class' => 'page-link'];
     }
 
     public function simpan()
-    {
-        $file_id = trim($this->input->post('drive_link', true));
+{
+    // ambil input utama
+    $judul  = trim($this->input->post('judul', true));
+    $mapel  = trim($this->input->post('mapel', true));
+    $kelas  = strtoupper(trim($this->input->post('kelas', true)));
+    $source = $this->input->post('source', true);
 
-        if ($file_id === '') {
+    // validasi wajib
+    if ($judul === '' || $kelas === '' || !in_array($kelas, ['X','XI','XII','UMUM'])) {
+        $this->session->set_flashdata('error','Data tidak valid');
+        redirect('AdminEbook/tambah');
+        return;
+    }
+
+    if (!in_array($source, ['DRIVE','LOCAL'])) {
+        $this->session->set_flashdata('error','Sumber file tidak valid');
+        redirect('AdminEbook/tambah');
+        return;
+    }
+
+    // data dasar
+    $data = [
+        'judul'      => $judul,
+        'mapel'      => $mapel,
+        'kelas'      => $kelas,
+        'source'     => $source,
+        'created_at' => date('Y-m-d H:i:s')
+    ];
+
+    /* ===================== DRIVE ===================== */
+    if ($source === 'DRIVE') {
+
+        $drive_id = trim($this->input->post('drive_link', true));
+
+        if ($drive_id === '') {
             $this->session->set_flashdata('error','File ID Google Drive wajib diisi');
             redirect('AdminEbook/tambah');
             return;
         }
 
-        $data = [
-            'judul'      => $this->input->post('judul', true),
-            'mapel'      => $this->input->post('mapel', true),
-            'kelas'      => strtoupper($this->input->post('kelas', true)), // X/XI/XII/UMUM
-            'file_drive' => $file_id,
-            'created_at' => date('Y-m-d H:i:s')
-        ];
+        // simpan
+        $data['file_drive'] = $drive_id;
+        $data['file_local'] = null;
+    }
 
-        // upload cover (opsional)
-        if (!empty($_FILES['cover']['name'])) {
-            $data['cover'] = $this->_upload_cover();
-            if ($data['cover'] === false) return;
+    /* ===================== LOCAL ===================== */
+    if ($source === 'LOCAL') {
+
+        if (empty($_FILES['file_local']['name'])) {
+            $this->session->set_flashdata('error','File ebook wajib diupload');
+            redirect('AdminEbook/tambah');
+            return;
         }
 
-        $this->db->insert('ebook', $data);
-
-        $this->session->set_flashdata('success','E-Book berhasil ditambahkan');
-        redirect('AdminEbook');
+        $data['file_local'] = $this->_upload_ebook();
+        $data['file_drive'] = null;
     }
+
+    // insert DB
+    $this->db->insert('ebook', $data);
+
+    $this->session->set_flashdata('success','E-Book berhasil ditambahkan');
+    redirect('AdminEbook');
+}
+
 
     /* ===================== EDIT ===================== */
     public function edit($id)
@@ -254,6 +291,28 @@ $config['attributes'] = ['class' => 'page-link'];
     }
 
     return null; // tidak valid
+}
+private function _upload_ebook()
+{
+    $config = [
+        'upload_path'   => './assets/uploads/ebook/',
+        'allowed_types' => 'pdf',
+        'max_size'      => 10240, // 10MB
+        'encrypt_name'  => true
+    ];
+
+    $this->load->library('upload', $config);
+
+    if (!$this->upload->do_upload('file_local')) {
+        $this->session->set_flashdata(
+            'error',
+            $this->upload->display_errors()
+        );
+        redirect($this->agent->referrer());
+        exit;
+    }
+
+    return $this->upload->data('file_name');
 }
 
 }
