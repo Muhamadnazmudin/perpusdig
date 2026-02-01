@@ -15,18 +15,54 @@ class AdminEbook extends MY_Controller {
 
     /* ===================== INDEX ===================== */
     public function index()
-    {
-        $data = [
-            'title' => 'Manajemen E-Book',
-            'ebook' => $this->Ebook_model->get_all()
-        ];
+{
+    $this->load->library('pagination');
 
-        $this->load->view('templates/header',$data);
-        $this->load->view('templates/sidebar', $this->data);
-        $this->load->view('templates/topbar', $this->data);
-        $this->load->view('admin/ebook/index',$data);
-        $this->load->view('templates/footer');
-    }
+    $keyword = $this->input->get('q');
+    $kelas   = $this->input->get('kelas');
+    $mapel   = $this->input->get('mapel');
+
+    $page  = $this->input->get('page');
+    $page  = is_numeric($page) ? $page : 0;
+    $limit = 15;
+
+    $total = $this->Ebook_model
+        ->count_filtered($keyword, $kelas, $mapel);
+
+    // pagination config
+    $config['base_url'] = site_url('AdminEbook');
+$config['total_rows'] = $total;
+$config['per_page'] = $limit;
+$config['reuse_query_string'] = true;
+$config['page_query_string'] = true;
+$config['query_string_segment'] = 'page';
+
+// bootstrap
+$config['full_tag_open'] = '<ul class="pagination justify-content-center">';
+$config['full_tag_close'] = '</ul>';
+$config['num_tag_open'] = '<li class="page-item">';
+$config['num_tag_close'] = '</li>';
+$config['cur_tag_open'] = '<li class="page-item active"><span class="page-link">';
+$config['cur_tag_close'] = '</span></li>';
+$config['attributes'] = ['class' => 'page-link'];
+
+
+    $this->pagination->initialize($config);
+
+    $data = [
+        'title'      => 'Manajemen E-Book',
+        'ebook'      => $this->Ebook_model
+                            ->get_filtered($limit, $page, $keyword, $kelas, $mapel),
+        'pagination' => $this->pagination->create_links()
+    ];
+
+    $this->load->view('templates/header',$data);
+    $this->load->view('templates/sidebar', $this->data);
+    $this->load->view('templates/topbar', $this->data);
+    $this->load->view('admin/ebook/index',$data);
+    $this->load->view('templates/footer');
+}
+
 
     /* ===================== TAMBAH ===================== */
     public function tambah()

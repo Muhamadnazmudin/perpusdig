@@ -17,7 +17,7 @@ class Buku_fisik extends MY_Controller {
     $keyword = $this->input->get('q');
     $page    = $this->input->get('page');
     $page    = (is_numeric($page)) ? $page : 0;
-    $limit   = 10;
+    $limit   = 15;
 
     $total = $this->Buku_fisik_model->count_filtered($keyword);
 
@@ -25,9 +25,11 @@ class Buku_fisik extends MY_Controller {
     $config['total_rows'] = $total;
     $config['per_page'] = $limit;
     $config['reuse_query_string'] = true;
+    $config['page_query_string'] = true;
+    $config['query_string_segment'] = 'page';
 
     // Bootstrap pagination
-    $config['full_tag_open'] = '<ul class="pagination justify-content-end">';
+    $config['full_tag_open']  = '<ul class="pagination justify-content-center">';
     $config['full_tag_close'] = '</ul>';
     $config['num_tag_open'] = '<li class="page-item">';
     $config['num_tag_close'] = '</li>';

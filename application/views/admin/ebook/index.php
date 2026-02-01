@@ -24,23 +24,45 @@
         ⬆ Import Excel
     </button>
 </div>
-
+<form method="get" class="mb-3">
+    <div class="row">
+        <div class="col-md-4">
+            <input type="text"
+                   name="q"
+                   class="form-control"
+                   placeholder="Cari judul e-book..."
+                   value="<?= htmlspecialchars($this->input->get('q')) ?>">
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary">
+                <i class="fas fa-search"></i> Cari
+            </button>
+        </div>
+    </div>
+</form>
 
             <table class="table table-bordered table-hover align-middle">
                 <thead class="thead-light">
                     <tr>
-                        <th width="80">Cover</th>
-                        <th>Judul</th>
-                        <th>Mapel</th>
-                        <th>Kelas</th>
-                        <th width="160">Aksi</th>
-                    </tr>
+                    <th width="50">No</th>
+                    <th width="80">Cover</th>
+                    <th>Judul</th>
+                    <th>Mapel</th>
+                    <th>Kelas</th>
+                    <th width="160">Aksi</th>
+                </tr>
                 </thead>
                 <tbody>
 
                 <?php if (!empty($ebook)): ?>
-                    <?php foreach ($ebook as $e): ?>
+                    <?php
+                        $page = $this->input->get('page') ?? 0;
+                        $no = $page + 1;
+                        foreach ($ebook as $e):
+                    ?>
+
                         <tr>
+                            <td class="text-center"><?= $no++ ?></td>
                             <!-- COVER -->
                             <td class="text-center">
                                 <?php if (!empty($e->cover)): ?>
@@ -89,7 +111,9 @@
 
                 </tbody>
             </table>
-
+                <div class="mt-3">
+    <?= $pagination ?>
+</div>
         </div>
     </div>
 

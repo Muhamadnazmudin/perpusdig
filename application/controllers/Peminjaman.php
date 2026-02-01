@@ -34,9 +34,11 @@ class Peminjaman extends MY_Controller {
     $config['total_rows'] = $total;
     $config['per_page']   = $limit;
     $config['reuse_query_string'] = true;
+    $config['page_query_string'] = true;
+    $config['query_string_segment'] = 'page';
 
     // Bootstrap pagination
-    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_open']  = '<ul class="pagination justify-content-center">';
     $config['full_tag_close'] = '</ul>';
     $config['num_tag_open'] = '<li class="page-item">';
     $config['num_tag_close'] = '</li>';

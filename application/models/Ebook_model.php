@@ -20,25 +20,29 @@ class Ebook_model extends CI_Model {
             ->row();
     }
 
-    public function count_filtered($kelas=null,$mapel=null)
-    {
-        if ($kelas) $this->db->where('kelas',$kelas);
-        if ($mapel) $this->db->where('mapel',$mapel);
+    public function count_filtered($keyword=null, $kelas=null, $mapel=null)
+{
+    if ($keyword) $this->db->like('judul', $keyword);
+    if ($kelas)   $this->db->where('kelas', $kelas);
+    if ($mapel)   $this->db->where('mapel', $mapel);
 
-        return $this->db->count_all_results($this->table);
-    }
+    return $this->db->count_all_results($this->table);
+}
 
-    public function get_filtered($limit,$offset,$kelas=null,$mapel=null)
-    {
-        if ($kelas) $this->db->where('kelas',$kelas);
-        if ($mapel) $this->db->where('mapel',$mapel);
 
-        return $this->db
-            ->limit($limit,$offset)
-            ->order_by('id_ebook','DESC')
-            ->get($this->table)
-            ->result();
-    }
+    public function get_filtered($limit, $offset, $keyword=null, $kelas=null, $mapel=null)
+{
+    if ($keyword) $this->db->like('judul', $keyword);
+    if ($kelas)   $this->db->where('kelas', $kelas);
+    if ($mapel)   $this->db->where('mapel', $mapel);
+
+    return $this->db
+        ->order_by('id_ebook','DESC')
+        ->limit($limit, $offset)
+        ->get($this->table)
+        ->result();
+}
+
 
     public function delete($id)
     {
