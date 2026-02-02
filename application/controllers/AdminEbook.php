@@ -198,4 +198,35 @@ class AdminEbook extends MY_Controller {
 
         return $this->upload->data('file_name');
     }
+    /* ===================== DELETE ===================== */
+public function delete($id)
+{
+    $ebook = $this->Ebook_model->get_by_id($id);
+    if (!$ebook) {
+        show_404();
+    }
+
+    // 🔥 hapus file ebook local jika ada
+    if ($ebook->source === 'LOCAL' && !empty($ebook->file_local)) {
+        $path = FCPATH . 'assets/uploads/ebook/' . $ebook->file_local;
+        if (file_exists($path)) {
+            unlink($path);
+        }
+    }
+
+    // 🔥 hapus cover jika ada
+    if (!empty($ebook->cover)) {
+        $cover = FCPATH . 'assets/uploads/cover_ebook/' . $ebook->cover;
+        if (file_exists($cover)) {
+            unlink($cover);
+        }
+    }
+
+    // 🔥 hapus data DB
+    $this->db->where('id_ebook', $id)->delete('ebook');
+
+    $this->session->set_flashdata('success','E-Book berhasil dihapus');
+    redirect('AdminEbook');
+}
+
 }
