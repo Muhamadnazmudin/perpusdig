@@ -118,6 +118,61 @@ class AdminEbook extends MY_Controller {
         $this->session->set_flashdata('success','E-Book berhasil ditambahkan');
         redirect('AdminEbook');
     }
+public function import()
+{
+    if ($this->input->method() !== 'post') {
+        show_404();
+    }
+
+    require FCPATH.'vendor/autoload.php'; // 🔑 WAJIB
+
+    if (empty($_FILES['file']['name'])) {
+        $this->session->set_flashdata('error','File belum dipilih');
+        redirect('AdminEbook');
+        return;
+    }
+
+    $ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+
+    if (!in_array($ext, ['xlsx','csv'])) {
+        $this->session->set_flashdata('error','File harus Excel (.xlsx / .csv)');
+        redirect('AdminEbook');
+        return;
+    }
+
+    $reader = ($ext === 'xlsx')
+        ? new \PhpOffice\PhpSpreadsheet\Reader\Xlsx()
+        : new \PhpOffice\PhpSpreadsheet\Reader\Csv();
+
+    $rows = $reader
+        ->load($_FILES['file']['tmp_name'])
+        ->getActiveSheet()
+        ->toArray();
+
+    $insert = [];
+    foreach ($rows as $i => $row) {
+        if ($i === 0) continue;
+        if (empty($row[0])) continue;
+
+        $insert[] = [
+            'judul'      => trim($row[0]),
+            'mapel'      => trim($row[1]),
+            'kelas'      => strtoupper(trim($row[2])),
+            'source'     => 'DRIVE',
+            'file_drive' => trim($row[3]),
+            'status'     => 'APPROVED',
+            'is_public'  => 1,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+    }
+
+    if ($insert) {
+        $this->db->insert_batch('ebook', $insert);
+    }
+
+    $this->session->set_flashdata('success','Import e-book berhasil');
+    redirect('AdminEbook');
+}
 
     /* ===================== EDIT ===================== */
     public function edit($id)
@@ -139,23 +194,60 @@ class AdminEbook extends MY_Controller {
 
     /* ===================== UPDATE ===================== */
     public function update($id)
-    {
-        $data = [
-            'judul' => $this->input->post('judul', true),
-            'mapel' => $this->input->post('mapel', true),
-            'kelas' => strtoupper($this->input->post('kelas', true))
-        ];
+{
+    $ebook = $this->Ebook_model->get_by_id($id);
+    if (!$ebook) show_404();
 
-        if (!empty($_FILES['cover']['name'])) {
-            $data['cover'] = $this->_upload_cover();
-            if ($data['cover'] === false) return;
+    $source = $this->input->post('source');
+
+    $data = [
+        'judul' => $this->input->post('judul', true),
+        'mapel' => $this->input->post('mapel', true),
+        'kelas' => strtoupper($this->input->post('kelas', true)),
+        'source'=> $source
+    ];
+
+    /* ===== DRIVE ===== */
+    if ($source === 'DRIVE') {
+        $data['file_drive'] = trim($this->input->post('drive_link', true));
+
+        // hapus file local lama
+        if ($ebook->source === 'LOCAL' && $ebook->file_local) {
+            $file = FCPATH.'assets/uploads/ebook/'.$ebook->file_local;
+            if (file_exists($file)) unlink($file);
         }
 
-        $this->db->where('id_ebook', $id)->update('ebook', $data);
-
-        $this->session->set_flashdata('success','E-Book berhasil diperbarui');
-        redirect('AdminEbook');
+        $data['file_local'] = null;
     }
+
+    /* ===== LOCAL ===== */
+    if ($source === 'LOCAL' && !empty($_FILES['file_local']['name'])) {
+
+        // hapus file lama
+        if ($ebook->file_local) {
+            $old = FCPATH.'assets/uploads/ebook/'.$ebook->file_local;
+            if (file_exists($old)) unlink($old);
+        }
+
+        $data['file_local'] = $this->_upload_ebook();
+        $data['file_drive'] = null;
+    }
+
+    /* ===== COVER ===== */
+    if (!empty($_FILES['cover']['name'])) {
+        if ($ebook->cover) {
+            $old = FCPATH.'assets/uploads/cover_ebook/'.$ebook->cover;
+            if (file_exists($old)) unlink($old);
+        }
+        $data['cover'] = $this->_upload_cover();
+    }
+
+    $this->db->where('id_ebook', $id)->update('ebook', $data);
+
+    $this->session->set_flashdata('success','E-Book berhasil diperbarui');
+    redirect('AdminEbook');
+}
+
 
     /* ===================== UPLOAD COVER ===================== */
     private function _upload_cover()
