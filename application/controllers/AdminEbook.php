@@ -143,13 +143,35 @@ public function index()
         $this->session->set_flashdata('success','E-Book berhasil ditambahkan');
         redirect('AdminEbook');
     }
-public function import()
+    private function extract_drive_id($input)
 {
-    if ($this->input->method() !== 'post') {
-        show_404();
+    if (!$input) return null;
+
+    $input = trim($input);
+
+    // jika sudah ID murni
+    if (preg_match('/^[a-zA-Z0-9_-]{20,}$/', $input)) {
+        return $input;
     }
 
-    require FCPATH.'vendor/autoload.php'; // 🔑 WAJIB
+    // format /file/d/ID/
+    if (preg_match('/\/d\/([a-zA-Z0-9_-]+)/', $input, $m)) {
+        return $m[1];
+    }
+
+    // format id=ID
+    if (preg_match('/id=([a-zA-Z0-9_-]+)/', $input, $m)) {
+        return $m[1];
+    }
+
+    return null;
+}
+
+public function import()
+{
+    if ($this->input->method() !== 'post') show_404();
+
+    require FCPATH.'vendor/autoload.php';
 
     if (empty($_FILES['file']['name'])) {
         $this->session->set_flashdata('error','File belum dipilih');
@@ -158,7 +180,6 @@ public function import()
     }
 
     $ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
-
     if (!in_array($ext, ['xlsx','csv'])) {
         $this->session->set_flashdata('error','File harus Excel (.xlsx / .csv)');
         redirect('AdminEbook');
@@ -175,16 +196,33 @@ public function import()
         ->toArray();
 
     $insert = [];
+    $skip   = 0;
+
     foreach ($rows as $i => $row) {
+
+        // skip header
         if ($i === 0) continue;
-        if (empty($row[0])) continue;
+
+        // judul wajib
+        if (empty($row[0])) {
+            $skip++;
+            continue;
+        }
+
+        // ekstrak ID drive
+        $drive_id = $this->extract_drive_id($row[3] ?? '');
+
+        if (!$drive_id) {
+            $skip++;
+            continue;
+        }
 
         $insert[] = [
             'judul'      => trim($row[0]),
-            'mapel'      => trim($row[1]),
-            'kelas'      => strtoupper(trim($row[2])),
+            'mapel'      => trim($row[1] ?? ''),
+            'kelas'      => strtoupper(trim($row[2] ?? 'UMUM')),
             'source'     => 'DRIVE',
-            'file_drive' => trim($row[3]),
+            'file_drive' => $drive_id,
             'status'     => 'APPROVED',
             'is_public'  => 1,
             'created_at' => date('Y-m-d H:i:s')
@@ -195,9 +233,14 @@ public function import()
         $this->db->insert_batch('ebook', $insert);
     }
 
-    $this->session->set_flashdata('success','Import e-book berhasil');
+    $this->session->set_flashdata(
+        'success',
+        'Import selesai. Berhasil: '.count($insert).' | Dilewati: '.$skip
+    );
+
     redirect('AdminEbook');
 }
+
 
     /* ===================== EDIT ===================== */
     public function edit($id)
