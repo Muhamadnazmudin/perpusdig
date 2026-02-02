@@ -15,40 +15,65 @@ class AdminEbook extends MY_Controller {
     }
 
     /* ===================== INDEX ===================== */
-    public function index()
-    {
-        $this->load->library('pagination');
+public function index()
+{
+    $this->load->library('pagination');
 
-        $keyword = $this->input->get('q');
-        $kelas   = $this->input->get('kelas');
-        $mapel   = $this->input->get('mapel');
+    $keyword = $this->input->get('q');
+    $kelas   = $this->input->get('kelas');
+    $mapel   = $this->input->get('mapel');
 
-        $page  = is_numeric($this->input->get('page')) ? $this->input->get('page') : 0;
-        $limit = 15;
+    $page  = is_numeric($this->input->get('page')) ? (int)$this->input->get('page') : 0;
+    $limit = 15;
 
-        $total = $this->Ebook_model->count_filtered($keyword, $kelas, $mapel);
+    // ADMIN → JANGAN pakai filter publik
+    $total = $this->Ebook_model->count_all_admin($keyword, $kelas, $mapel);
 
-        $config['base_url'] = site_url('AdminEbook');
-        $config['total_rows'] = $total;
-        $config['per_page'] = $limit;
-        $config['reuse_query_string'] = true;
-        $config['page_query_string'] = true;
-        $config['query_string_segment'] = 'page';
+    $config = [
+        'base_url'            => site_url('AdminEbook'),
+        'total_rows'          => $total,
+        'per_page'            => $limit,
+        'page_query_string'   => true,
+        'query_string_segment'=> 'page',
+        'reuse_query_string'  => true,
 
-        $this->pagination->initialize($config);
+        // ===== BOOTSTRAP PAGINATION =====
+        'full_tag_open'       => '<nav><ul class="pagination justify-content-center">',
+        'full_tag_close'      => '</ul></nav>',
 
-        $data = [
-            'title'      => 'Manajemen E-Book',
-            'ebook'      => $this->Ebook_model->get_filtered($limit, $page, $keyword, $kelas, $mapel),
-            'pagination' => $this->pagination->create_links()
-        ];
+        'num_tag_open'        => '<li class="page-item">',
+        'num_tag_close'       => '</li>',
 
-        $this->load->view('templates/header',$data);
-        $this->load->view('templates/sidebar', $this->data);
-        $this->load->view('templates/topbar', $this->data);
-        $this->load->view('admin/ebook/index',$data);
-        $this->load->view('templates/footer');
-    }
+        'cur_tag_open'        => '<li class="page-item active"><span class="page-link">',
+        'cur_tag_close'       => '</span></li>',
+
+        'prev_tag_open'       => '<li class="page-item">',
+        'prev_tag_close'      => '</li>',
+        'prev_link'           => '&laquo;',
+
+        'next_tag_open'       => '<li class="page-item">',
+        'next_tag_close'      => '</li>',
+        'next_link'           => '&raquo;',
+
+        'attributes'          => ['class' => 'page-link']
+    ];
+
+    $this->pagination->initialize($config);
+
+    $data = [
+        'title'      => 'Manajemen E-Book',
+        'ebook'      => $this->Ebook_model->get_all_admin(
+                            $limit, $page, $keyword, $kelas, $mapel
+                        ),
+        'pagination' => $this->pagination->create_links()
+    ];
+
+    $this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar', $this->data);
+    $this->load->view('templates/topbar', $this->data);
+    $this->load->view('admin/ebook/index', $data);
+    $this->load->view('templates/footer');
+}
 
     /* ===================== TAMBAH ===================== */
     public function tambah()

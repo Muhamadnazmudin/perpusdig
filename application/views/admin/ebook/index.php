@@ -111,9 +111,12 @@
 
                 </tbody>
             </table>
-                <div class="mt-3">
-    <?= $pagination ?>
-</div>
+                <?php if (!empty($pagination)): ?>
+    <div class="d-flex justify-content-center mt-4">
+        <?= $pagination ?>
+    </div>
+<?php endif; ?>
+
         </div>
     </div>
 
