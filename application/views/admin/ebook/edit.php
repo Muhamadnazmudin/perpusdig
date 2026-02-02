@@ -32,6 +32,7 @@
         <option value="X"   <?= $ebook->kelas=='X'?'selected':'' ?>>X</option>
         <option value="XI"  <?= $ebook->kelas=='XI'?'selected':'' ?>>XI</option>
         <option value="XII" <?= $ebook->kelas=='XII'?'selected':'' ?>>XII</option>
+        <option value="UMUM" <?= $ebook->kelas=='UMUM'?'selected':'' ?>>UMUM</option>
     </select>
 </div>
 
