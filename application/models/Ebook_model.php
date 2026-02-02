@@ -101,7 +101,7 @@ public function get_all_admin($limit, $offset, $keyword=null, $kelas=null, $mape
     if ($mapel)   $this->db->where('ebook.mapel', $mapel);
 
     return $this->db
-        ->order_by('ebook.id_ebook', 'DESC')
+        ->order_by('ebook.id_ebook', 'ASC')
         ->limit($limit, $offset)
         ->get()
         ->result();
