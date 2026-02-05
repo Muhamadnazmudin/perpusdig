@@ -53,6 +53,12 @@ $role = (int) $this->user['id_role']; // 1=admin, 2=guru, 3=siswa
             <a class="collapse-item" href="<?= site_url('jurusan') ?>">Jurusan</a>
             <a class="collapse-item" href="<?= site_url('guru') ?>">Guru</a>
             <a class="collapse-item" href="<?= site_url('siswa') ?>">Siswa</a>
+            <!-- 🔼 KENAIKAN KELAS -->
+<a class="collapse-item <?= ($this->uri->segment(2) == 'kenaikan_kelas') ? 'active font-weight-bold text-danger' : '' ?>"
+   href="<?= site_url('siswa/kenaikan_kelas') ?>">
+    <i class="fas fa-level-up-alt mr-1"></i> Kenaikan Kelas
+</a>
+
 
             <!-- 🔥 MAPPING RFID -->
             <div class="dropdown-divider"></div>

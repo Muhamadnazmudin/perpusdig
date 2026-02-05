@@ -352,5 +352,150 @@ class Siswa extends MY_Controller {
         'token' => $token
     ];
 }
+/* =========================================================
+ * KENAIKAN KELAS
+ * ========================================================= */
+public function kenaikan_kelas()
+{
+    $this->only_role([1]);
+
+    $data['title'] = 'Kenaikan Kelas';
+
+    // ambil kelas (dropdown atas)
+    $data['kelas'] = $this->db->get('kelas')->result();
+
+    // 🔥 INI PENTING
+    $data['siswa'] = [];        // default kosong
+    $data['kelas_tujuan'] = []; // default kosong
+
+    // kalau ada kelas dipilih
+    $id_kelas = $this->input->get('kelas');
+    if ($id_kelas) {
+
+        // ambil siswa di kelas terpilih
+        $data['siswa'] = $this->db->query("
+            SELECT s.*, k.nama_kelas
+            FROM siswa s
+            JOIN kelas k ON k.id_kelas = s.id_kelas
+            WHERE s.id_kelas = ?
+            AND s.status = 'aktif'
+        ", [$id_kelas])->result();
+
+        // tentukan kelas tujuan (contoh: X -> XI)
+        $data['kelas_tujuan'] = $this->db->query("
+            SELECT * FROM kelas
+            WHERE nama_kelas LIKE 'XI %'
+        ")->result();
+    }
+
+    $this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar');
+    $this->load->view('templates/topbar');
+    $this->load->view('siswa/kenaikan_kelas', $data);
+    $this->load->view('templates/footer');
+}
+
+/* =========================================================
+ * PROSES KENAIKAN KELAS
+ * ========================================================= */
+public function proses_kenaikan_kelas()
+{
+    $this->only_role([1]);
+
+    $map_x  = $this->input->post('map_x');   // X -> XI
+    $map_xi = $this->input->post('map_xi');  // XI -> XII
+
+    if (!$map_x && !$map_xi) {
+        $this->session->set_flashdata('error', 'Mapping kelas belum diisi');
+        redirect('siswa/kenaikan_kelas');
+        return;
+    }
+
+    $this->db->trans_start();
+
+    /* ========== 1. LULUSKAN KELAS XII ========== */
+    $this->db->query("
+        UPDATE siswa s
+        JOIN kelas k ON k.id_kelas = s.id_kelas
+        SET s.status = 'lulus'
+        WHERE k.nama_kelas LIKE 'XII %'
+        AND s.status = 'aktif'
+    ");
+
+    /* ========== 2. X -> XI ========== */
+    if ($map_x) {
+        foreach ($map_x as $kelas_lama => $kelas_baru) {
+            if (!$kelas_baru) continue;
+
+            $this->db->where('id_kelas', $kelas_lama);
+            $this->db->where('status', 'aktif');
+            $this->db->update('siswa', [
+                'id_kelas' => $kelas_baru
+            ]);
+        }
+    }
+
+    /* ========== 3. XI -> XII ========== */
+    if ($map_xi) {
+        foreach ($map_xi as $kelas_lama => $kelas_baru) {
+            if (!$kelas_baru) continue;
+
+            $this->db->where('id_kelas', $kelas_lama);
+            $this->db->where('status', 'aktif');
+            $this->db->update('siswa', [
+                'id_kelas' => $kelas_baru
+            ]);
+        }
+    }
+
+    $this->db->trans_complete();
+
+    if ($this->db->trans_status() === FALSE) {
+        $this->session->set_flashdata('error', 'Kenaikan kelas gagal');
+    } else {
+        $this->session->set_flashdata('success', 'Kenaikan kelas berhasil diproses');
+    }
+
+    redirect('siswa/kenaikan_kelas');
+}
+/* =========================================================
+ * SIMPAN KENAIKAN KELAS (PER SISWA)
+ * ========================================================= */
+public function simpan_kenaikan()
+{
+    $this->only_role([1]);
+
+    $naik = $this->input->post('naik');
+
+    if (!$naik || !is_array($naik)) {
+        $this->session->set_flashdata('error', 'Tidak ada data yang diproses');
+        redirect($_SERVER['HTTP_REFERER']);
+        return;
+    }
+
+    $this->db->trans_start();
+
+    foreach ($naik as $id_siswa => $id_kelas_baru) {
+
+        // skip jika tidak dipilih
+        if (!$id_kelas_baru) continue;
+
+        $this->db->where('id_siswa', $id_siswa);
+        $this->db->where('status', 'aktif');
+        $this->db->update('siswa', [
+            'id_kelas' => $id_kelas_baru
+        ]);
+    }
+
+    $this->db->trans_complete();
+
+    if ($this->db->trans_status() === FALSE) {
+        $this->session->set_flashdata('error', 'Gagal menyimpan kenaikan kelas');
+    } else {
+        $this->session->set_flashdata('success', 'Kenaikan kelas berhasil disimpan');
+    }
+
+    redirect($_SERVER['HTTP_REFERER']);
+}
 
 }
