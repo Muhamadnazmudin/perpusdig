@@ -95,6 +95,13 @@ class Siswa extends MY_Controller {
     // ===== RFID =====
     $rfid_uid = trim($this->input->post('rfid_uid'));
     $rfid_uid = $rfid_uid === '' ? null : $rfid_uid;
+        // 🔒 CEK NIS DOBEL (WAJIB)
+    if ($this->db->get_where('siswa', ['nis' => $nis])->row()) {
+        $this->session->set_flashdata('error', 'NIS sudah terdaftar');
+        redirect('siswa');
+        return;
+    }
+
 
     // 🔒 cek RFID dobel
     if ($rfid_uid) {
@@ -107,18 +114,20 @@ class Siswa extends MY_Controller {
 
     // ===== INSERT SISWA =====
     $this->db->insert('siswa', [
-        'nis'        => $nis,
-        'nama_siswa' => $nama,
-        'no_hp'      => $no_hp,
-        'id_kelas'   => $id_kelas,
-        'id_jurusan' => $id_jurusan,
-        'rfid_uid'   => $rfid_uid
-    ]);
+    'nis'        => $nis,
+    'nama_siswa' => $nama,
+    'no_hp'      => $no_hp,
+    'id_kelas'   => $id_kelas,
+    'id_jurusan' => $id_jurusan,
+    'rfid_uid'   => $rfid_uid,
+    'status'     => 'aktif'
+]);
+
 
     $id_siswa = $this->db->insert_id();
 
     // ===== GENERATE QR =====
-    $qr = $this->generate_qr_siswa($id_siswa, $nis);
+    $qr = $this->generate_qr_siswa($nis);
 
     $this->db->where('id_siswa', $id_siswa)->update('siswa', [
         'qr_code'  => $qr['path'],
@@ -275,10 +284,40 @@ class Siswa extends MY_Controller {
         }
 
         // skip jika NIS sudah ada
-        if ($this->db->get_where('siswa', ['nis' => $nis])->row()) {
-            $error[] = "Baris {$baris}: NIS {$nis} sudah terdaftar";
-            continue;
+        $exist = $this->db->get_where('siswa', ['nis' => $nis])->row();
+
+$dataImport = [
+    'nama_siswa' => $nama,
+    'no_hp'      => $no_hp,
+    'id_kelas'   => $id_kelas,
+    'id_jurusan' => $id_jurusan,
+    'status'     => 'aktif'
+];
+
+if ($exist) {
+
+    // ===============================
+    // CEK APAKAH ADA PERUBAHAN DATA
+    // ===============================
+    $changed = false;
+    foreach ($dataImport as $k => $v) {
+        if ((string)$exist->$k !== (string)$v) {
+            $changed = true;
+            break;
         }
+    }
+
+    // 🔁 UPDATE JIKA ADA PERUBAHAN
+    if ($changed) {
+        $this->db->where('id_siswa', $exist->id_siswa)
+                 ->update('siswa', $dataImport);
+        $update++;
+    }
+
+    // ⏭️ JIKA SAMA → SKIP
+    continue;
+}
+
 
         // normalisasi no HP (AMAN)
         $no_hp = preg_replace('/[^0-9]/', '', $no_hp);
@@ -288,17 +327,18 @@ class Siswa extends MY_Controller {
 
         // INSERT (TETAP SEPERTI ASLI)
         $this->db->insert('siswa', [
-            'nis'        => $nis,
-            'nama_siswa' => $nama,
-            'no_hp'      => $no_hp,
-            'id_kelas'   => $id_kelas,
-            'id_jurusan' => $id_jurusan
-        ]);
+    'nis'        => $nis,
+    'nama_siswa' => $nama,
+    'no_hp'      => $no_hp,
+    'id_kelas'   => $id_kelas,
+    'id_jurusan' => $id_jurusan,
+    'status'     => 'aktif'   // 🔥 WAJIB
+]);
 
         $id_siswa = $this->db->insert_id();
 
         // generate QR (TETAP)
-        $qr = $this->generate_qr_siswa($id_siswa, $nis);
+        $qr = $this->generate_qr_siswa($nis);
 
         $this->db->where('id_siswa', $id_siswa)
                  ->update('siswa', [
@@ -335,23 +375,32 @@ class Siswa extends MY_Controller {
     /* =========================================================
      * GENERATE QR (PRIVATE)
      * ========================================================= */
-    private function generate_qr_siswa($id_siswa, $nis)
+    private function generate_qr_siswa($nis)
 {
     $dir = FCPATH . 'assets/qrcode/';
     if (!is_dir($dir)) {
         mkdir($dir, 0755, true);
     }
 
-    $token = 'PERPUS|SISWA|' . $id_siswa . '|' . md5($nis . time());
-    $file  = 'siswa_' . $id_siswa . '.png';
+    // 🔥 ISI QR = NIS (yang = NISN)
+    $file = $nis . '.png';
 
-    QRcode::png($token, $dir.$file, QR_ECLEVEL_L, 6);
+    if (!file_exists($dir . $file)) {
+        QRcode::png(
+            $nis,
+            $dir . $file,
+            QR_ECLEVEL_H,
+            6,
+            2
+        );
+    }
 
     return [
         'path'  => 'assets/qrcode/' . $file,
-        'token' => $token
+        'token' => $nis
     ];
 }
+
 /* =========================================================
  * KENAIKAN KELAS
  * ========================================================= */

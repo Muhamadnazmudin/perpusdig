@@ -27,15 +27,12 @@ class Kunjungan extends MY_Controller {
     // dipanggil oleh JS scan QR
     public function scan()
 {
-    $token = $this->input->post('token', true);
+    $nis = trim($this->input->post('token', true));
 
-    $exp = explode('|', $token);
-    if (count($exp) < 3) {
-        echo json_encode(['status' => false]);
+    if ($nis === '') {
+        echo json_encode(['status' => false, 'msg' => 'QR kosong']);
         return;
     }
-
-    $id_siswa = (int)$exp[2];
 
     $siswa = $this->db
         ->select('
@@ -47,12 +44,12 @@ class Kunjungan extends MY_Controller {
         ')
         ->join('kelas','kelas.id_kelas=siswa.id_kelas')
         ->join('jurusan','jurusan.id_jurusan=siswa.id_jurusan')
-        ->where('siswa.id_siswa', $id_siswa)
+        ->where('siswa.nis', $nis)
         ->get('siswa')
         ->row();
 
     if (!$siswa) {
-        echo json_encode(['status' => false]);
+        echo json_encode(['status' => false, 'msg' => 'QR tidak dikenali']);
         return;
     }
 
@@ -62,6 +59,7 @@ class Kunjungan extends MY_Controller {
         'jam'    => date('H:i:s')
     ]);
 }
+
 // dipanggil oleh scan RFID
 public function scan_rfid()
 {
