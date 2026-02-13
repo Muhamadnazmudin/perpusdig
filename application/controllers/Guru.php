@@ -24,21 +24,28 @@ class Guru extends MY_Controller {
 
     public function tambah()
 {
-    $nip = $this->input->post('nip');
+    $nip = $this->input->post('nip', true);
+
+    // cek sudah ada atau belum
+    $cek = $this->db->get_where('guru', ['nip' => $nip])->row();
+    if ($cek) {
+        $this->session->set_flashdata('error','NIP sudah terdaftar');
+        redirect('guru');
+    }
 
     // simpan guru
     $this->Guru_model->insert([
         'nip'       => $nip,
-        'nama_guru' => $this->input->post('nama_guru'),
-        'email'     => $this->input->post('email')
+        'nama_guru' => $this->input->post('nama_guru', true),
+        'email'     => $this->input->post('email', true)
     ]);
 
-    // otomatis buat akun login
+    // otomatis buat akun login guru
     $this->db->insert('users', [
-        'id_role'  => 2, // guru
+        'id_role'  => 4, // ROLE GURU
         'username' => $nip,
         'password' => password_hash($nip, PASSWORD_DEFAULT),
-        'nama'     => $this->input->post('nama_guru'),
+        'nama'     => $this->input->post('nama_guru', true),
         'status'   => 'aktif'
     ]);
 

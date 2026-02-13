@@ -6,57 +6,84 @@ class Profil extends MY_Controller {
     public function __construct()
     {
         parent::__construct();
-        $this->only_role([3]); // SISWA
+        $this->only_role([2,3]); // SISWA
         $this->load->model('Siswa_model');
     }
 
     public function index()
 {
-    $user = $this->session->userdata('user');
+    $user = $this->user;
 
-    if (!$user || $user['id_role'] != 3) {
-        show_error('Session login tidak valid');
+    if (!in_array($user['id_role'], [2,3])) {
+        show_error('Akses ditolak');
     }
 
-    $nis = $user['username']; // username = NIS
+    // ================= SISWA =================
+    if ($user['id_role'] == 3) {
 
-    $siswa = $this->db
-    ->select('
-        siswa.nis,
-        siswa.nama_siswa,
-        siswa.foto,
-        siswa.qr_code,
-        kelas.nama_kelas,
-        jurusan.nama_jurusan
-    ')
-    ->from('siswa')
-    ->join('kelas', 'kelas.id_kelas = siswa.id_kelas')
-    ->join('jurusan', 'jurusan.id_jurusan = siswa.id_jurusan')
-    ->where('siswa.nis', $nis)
-    ->get()
-    ->row();
+        $nis = $user['username'];
 
+        $siswa = $this->db
+            ->select('
+                siswa.nis,
+                siswa.nama_siswa,
+                siswa.foto,
+                siswa.qr_code,
+                kelas.nama_kelas,
+                jurusan.nama_jurusan
+            ')
+            ->from('siswa')
+            ->join('kelas', 'kelas.id_kelas = siswa.id_kelas')
+            ->join('jurusan', 'jurusan.id_jurusan = siswa.id_jurusan')
+            ->where('siswa.nis', $nis)
+            ->get()
+            ->row();
 
-    if (!$siswa) {
-        show_error('Data siswa tidak ditemukan');
+        if (!$siswa) {
+            show_error('Data siswa tidak ditemukan');
+        }
+
+        $data = [
+            'title' => 'Profil Siswa',
+            'siswa' => $siswa
+        ];
+
+        $view = 'siswa/profil';
     }
 
-    $data = [
-        'title' => 'Profil Siswa',
-        'siswa' => $siswa
-    ];
+    // ================= GURU =================
+    else {
+
+        $nip = $user['username'];
+
+        $guru = $this->db
+            ->where('nip', $nip)
+            ->get('guru')
+            ->row();
+
+        if (!$guru) {
+            show_error('Data guru tidak ditemukan');
+        }
+
+        $data = [
+            'title' => 'Profil Guru',
+            'guru'  => $guru
+        ];
+
+        $view = 'guru/profil';
+    }
 
     $this->load->view('templates/header', $data);
     $this->load->view('templates/sidebar');
     $this->load->view('templates/topbar');
-    $this->load->view('siswa/profil', $data);
+    $this->load->view($view, $data);
     $this->load->view('templates/footer');
 }
 public function upload_foto()
 {
     // pastikan login siswa
     $user = $this->session->userdata('user');
-    if (!$user || $user['id_role'] != 3) {
+    if (!$user || !in_array($user['id_role'], [2,3])) {
         show_error('Akses ditolak');
     }
 

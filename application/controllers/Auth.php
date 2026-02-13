@@ -33,19 +33,16 @@ private function generate_math_captcha()
         redirect('dashboard');
     }
 
-    // ================= GET REQUEST =================
     if (!$this->input->post()) {
         $data['soal'] = $this->generate_math_captcha();
         $this->load->view('auth/login', $data);
         return;
     }
 
-    // ================= POST REQUEST =================
     $username = $this->input->post('username', TRUE);
     $password = $this->input->post('password');
     $jawaban  = $this->input->post('captcha');
 
-    // ambil jawaban captcha lama
     $captcha_benar = $this->session->userdata('math_captcha');
 
     if ($jawaban != $captcha_benar) {
@@ -53,12 +50,13 @@ private function generate_math_captcha()
         redirect('login');
     }
 
-    // hapus captcha SETELAH benar
     $this->session->unset_userdata('math_captcha');
 
     $user = $this->User_model->get_by_username($username);
 
-    if ($user && $user['id_role'] == 3 && password_verify($password, $user['password'])) {
+    // 🔥 IZINKAN GURU (2) DAN SISWA (3)
+    if ($user && in_array($user['id_role'], [2,3]) 
+        && password_verify($password, $user['password'])) {
 
         $this->session->set_userdata([
             'login' => true,
@@ -74,7 +72,7 @@ private function generate_math_captcha()
         redirect('dashboard');
     }
 
-    $this->session->set_flashdata('error', 'Login siswa gagal');
+    $this->session->set_flashdata('error', 'Login gagal');
     redirect('login');
 }
 

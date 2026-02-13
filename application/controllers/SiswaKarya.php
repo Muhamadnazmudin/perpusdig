@@ -6,7 +6,7 @@ class SiswaKarya extends MY_Controller {
     public function __construct()
     {
         parent::__construct();
-        $this->only_role([3]); // SISWA
+        $this->only_role([2,3]); // SISWA dan guru
         $this->load->model('Karya_model');
         $this->load->library('upload'); // WAJIB
     }

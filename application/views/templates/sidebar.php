@@ -139,7 +139,7 @@ $role = (int) $this->user['id_role']; // 1=admin, 2=guru, 3=siswa
 
 
     <!-- ================= ADMIN & GURU ================= -->
-    <?php if (in_array($role, [1,2], true)): ?>
+    <?php if (in_array($role, [1], true)): ?>
 
     <hr class="sidebar-divider">
     <div class="sidebar-heading">Transaksi & Materi</div>
@@ -222,11 +222,11 @@ $role = (int) $this->user['id_role']; // 1=admin, 2=guru, 3=siswa
 <?php endif; ?>
 
     <?php endif; ?>
-    <!-- =============== END ADMIN & GURU ================ -->
+    <!-- =============== END ADMIN ================ -->
 
 
-    <!-- ================= SISWA ================= -->
-    <?php if ($role === 3): ?>
+    <!-- ================= SISWA dan Guru ================= -->
+    <?php if (in_array($role, [2,3], true)): ?>
 
     <hr class="sidebar-divider">
     <div class="sidebar-heading">Menu Siswa</div>

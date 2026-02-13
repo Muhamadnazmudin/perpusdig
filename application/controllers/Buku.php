@@ -6,7 +6,7 @@ class Buku extends MY_Controller {
     public function __construct()
 {
     parent::__construct();
-    $this->only_role([3]); // SISWA
+    $this->only_role([2,3]); // SISWA
 
     $this->load->model([
         'Buku_fisik_model',
@@ -72,7 +72,7 @@ public function index()
    // DETAIL BUKU UNTUK SISWA
 public function detail($id)
 {
-    $this->only_role([3]); // SISWA
+    $this->only_role([2,3]); // SISWa dan Guru
 
     $data['buku'] = $this->Buku_fisik_model->get_detail($id);
     if (!$data['buku']) {

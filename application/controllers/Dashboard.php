@@ -11,56 +11,44 @@ class Dashboard extends MY_Controller {
 
     public function index()
 {
-    // ⬇️ AMBIL DARI MY_Controller (BENAR)
-    $role = $this->user['id_role'];
+    $role    = $this->user['id_role'];
     $user_id = $this->user['id_user'];
 
     $data['title'] = 'Dashboard';
 
     // ================= ADMIN =================
-    if ($role === 1) {
+    if ($role == 1) {
+
         $this->load->model('Settings_model');
-$data['maintenance_mode'] = $this->Settings_model->get('maintenance_mode');
+        $data['maintenance_mode'] =
+            $this->Settings_model->get('maintenance_mode');
 
-        $data['stat'] = $this->Dashboard_model->get_stat_admin();
+        $data['stat'] =
+            $this->Dashboard_model->get_stat_admin();
 
-        $this->load->view('templates/header', $data);
-        $this->load->view('templates/sidebar', $this->data);
-$this->load->view('templates/topbar', $this->data);
-        $this->load->view('dashboard/admin', $data);
-        $this->load->view('templates/footer');
-        return;
-    }
-    
-
-    // ================= GURU =================
-    if ($role === 2) {
-
-        $data['stat'] = $this->Dashboard_model->get_stat_guru($user_id);
-
-        $this->load->view('templates/header', $data);
-        $this->load->view('templates/sidebar');
-        $this->load->view('templates/topbar');
-        $this->load->view('dashboard/guru', $data);
-        $this->load->view('templates/footer');
-        return;
+        $view = 'dashboard/admin';
     }
 
-    // ================= SISWA =================
-    if ($role === 3) {
+    elseif ($role == 2 || $role == 3) {
 
-        $data['stat'] = $this->Dashboard_model->get_stat_siswa($user_id);
+    $data['stat'] =
+        $this->Dashboard_model->get_stat_user($user_id);
 
-        $this->load->view('templates/header', $data);
-        $this->load->view('templates/sidebar');
-        $this->load->view('templates/topbar',);
-        $this->load->view('dashboard/siswa', $data);
-        $this->load->view('templates/footer');
-        return;
+    $view = ($role == 2)
+        ? 'dashboard/guru'
+        : 'dashboard/siswa';
+}
+
+    else {
+        show_error('Role tidak dikenal', 403);
     }
 
-    // kalau role aneh
-    show_error('Role tidak dikenal', 403);
+    // Template
+    $this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar', $this->data);
+    $this->load->view('templates/topbar', $this->data);
+    $this->load->view($view, $data);
+    $this->load->view('templates/footer');
 }
 public function toggle_maintenance()
 {

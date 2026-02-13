@@ -6,7 +6,7 @@ class SiswaEbook extends MY_Controller {
     public function __construct()
     {
         parent::__construct();
-        $this->only_role([3]); // SISWA
+        $this->only_role([2,3]); // SISWA
         $this->load->model('Ebook_model');
         $this->load->model('Riwayat_model');
         $this->load->library('pagination');
@@ -67,7 +67,7 @@ $this->pagination->initialize($config);
     /* ===================== BACA ===================== */
     public function baca($id)
     {
-        $this->only_role([3]);
+        $this->only_role([2,3]);
 
         $ebook = $this->Ebook_model->get_by_id($id);
 

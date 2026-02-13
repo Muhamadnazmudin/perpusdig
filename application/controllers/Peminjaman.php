@@ -212,7 +212,7 @@ public function tolak($id)
     }
     public function pinjam($id_buku)
 {
-    $this->only_role([3]); // SISWA
+    $this->only_role([2,3]); // SISWA
 
     $id_user = $this->user['id_user'];
 
@@ -262,7 +262,7 @@ public function tolak($id)
 }
 public function daftar()
 {
-    $this->only_role([3]); // SISWA
+    $this->only_role([2,3]); // SISWA
 
     $data['title'] = 'Daftar Pinjaman Saya';
     $data['peminjaman'] = $this->Peminjaman_model
@@ -276,7 +276,7 @@ public function daftar()
 
 public function riwayat()
 {
-    $this->only_role([3]);
+    $this->only_role([2,3]);
 
     $data['title'] = 'Riwayat Pinjaman';
     $data['peminjaman'] = $this->Peminjaman_model

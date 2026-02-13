@@ -59,5 +59,23 @@ public function get_stat_siswa($id_user)
             ->count_all_results('peminjaman'),
     ];
 }
+public function get_stat_user($id_user)
+{
+    return [
 
+        'dipinjam' => $this->db
+            ->where('id_user', $id_user)
+            ->where('status', 'dipinjam')
+            ->count_all_results('peminjaman'),
+
+        'terlambat' => $this->db
+            ->where('id_user', $id_user)
+            ->where('status', 'terlambat')
+            ->count_all_results('peminjaman'),
+
+        'riwayat' => $this->db
+            ->where('id_user', $id_user)
+            ->count_all_results('peminjaman'),
+    ];
+}
 }
