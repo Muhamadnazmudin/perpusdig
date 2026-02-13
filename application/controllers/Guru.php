@@ -42,7 +42,7 @@ class Guru extends MY_Controller {
 
     // otomatis buat akun login guru
     $this->db->insert('users', [
-        'id_role'  => 4, // ROLE GURU
+        'id_role'  => 3, // ROLE GURU
         'username' => $nip,
         'password' => password_hash($nip, PASSWORD_DEFAULT),
         'nama'     => $this->input->post('nama_guru', true),
