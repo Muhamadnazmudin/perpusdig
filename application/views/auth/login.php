@@ -85,7 +85,7 @@
             <input type="number" name="captcha" placeholder="Jawaban" required>
         </div>
 
-        <button type="submit" class="btn-login">Login Siswa</button>
+        <button type="submit" class="btn-login">Login Guru & Siswa</button>
     </form>
 
     <div class="footer-text">
