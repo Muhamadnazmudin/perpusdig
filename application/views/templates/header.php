@@ -33,7 +33,7 @@
 
     <!-- SB Admin 2 Core CSS -->
     <link href="<?= base_url('assets/sbadmin2/css/sb-admin-2.min.css') ?>" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
     <!-- ================= THEME CSS ================= -->
     <?php
 $theme = $this->session->userdata('theme') ?? 'light';

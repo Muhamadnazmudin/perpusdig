@@ -21,6 +21,13 @@ $role = (int) $this->user['id_role']; // 1=admin, 2=guru, 3=siswa
             <span>Dashboard</span>
         </a>
     </li>
+    <!-- 📖 BACA AL-QUR'AN (ALL ROLE) -->
+<li class="nav-item <?= ($this->uri->segment(1) == 'quran') ? 'active' : '' ?>">
+    <a class="nav-link" href="<?= site_url('quran') ?>">
+        <i class="fas fa-fw fa-quran"></i>
+        <span>Baca Al-Qur'an</span>
+    </a>
+</li>
 
     <!-- ================= ADMIN ================= -->
     <?php if ($role === 1): ?>
