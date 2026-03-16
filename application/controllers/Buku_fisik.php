@@ -263,10 +263,7 @@ public function import()
     $this->load->library('upload', $config);
 
     if (!$this->upload->do_upload('file_excel')) {
-        $this->session->set_flashdata(
-            'error',
-            $this->upload->display_errors('', '')
-        );
+        $this->session->set_flashdata('error', $this->upload->display_errors('', ''));
         redirect('buku_fisik/tambah');
         return;
     }
@@ -294,20 +291,23 @@ public function import()
         }
 
         $isbn = trim($row['A']);
-$isbn = ($isbn === '') ? null : $isbn;
+        $isbn = ($isbn === '') ? null : $isbn;
 
-        // skip baris kosong
+        // skip jika judul kosong
         if (empty($row['B'])) {
             continue;
         }
 
-        // ===== CEK ISBN DUPLIKAT =====
+        // cek ISBN duplikat
         if (!empty($isbn)) {
             if ($this->Buku_fisik_model->isbn_exists($isbn)) {
                 $skipped++;
-                continue; // ⛔ SKIP ISBN DUPLIKAT
+                continue;
             }
         }
+
+        // ambil kelas dari excel kolom I
+        $kelas = !empty($row['I']) ? trim($row['I']) : 'Umum';
 
         $insert[] = [
             'isbn'        => $isbn,
@@ -317,7 +317,7 @@ $isbn = ($isbn === '') ? null : $isbn;
             'tahun'       => trim($row['E']),
             'id_kategori' => !empty($row['F']) ? $row['F'] : $default_kategori,
             'id_rak'      => !empty($row['G']) ? $row['G'] : $default_rak,
-            'stok'        => trim($row['H']),
+            'stok'        => !empty($row['H']) ? $row['H'] : 1,
             'kelas'       => $kelas,
             'created_at'  => date('Y-m-d H:i:s')
         ];
@@ -332,7 +332,7 @@ $isbn = ($isbn === '') ? null : $isbn;
     // hapus file excel
     unlink($file['full_path']);
 
-    // ===== FLASH MESSAGE RAPIH =====
+    // ===== FLASH MESSAGE =====
     $this->session->set_flashdata(
         'success',
         "Import selesai. Berhasil: {$inserted} data, Dilewati (ISBN duplikat): {$skipped} data."
@@ -340,6 +340,4 @@ $isbn = ($isbn === '') ? null : $isbn;
 
     redirect('buku_fisik');
 }
-
-
 }

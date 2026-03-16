@@ -23,7 +23,7 @@ public function index()
     $keyword = $this->input->get('q', true);
     $kelas   = $this->input->get('kelas', true);
 
-    $limit  = 5;
+    $limit  = 8;
     $page   = (int) $this->input->get('page');
     $offset = ($page > 1) ? ($page - 1) * $limit : 0;
 
