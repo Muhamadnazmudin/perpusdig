@@ -5,6 +5,43 @@
     <a href="<?= site_url('buku-fisik/tambah') ?>" class="btn btn-primary btn-sm mb-3">
         <i class="fas fa-plus"></i> Tambah Buku
     </a>
+    <div class="card shadow mb-3">
+    <div class="card-body">
+
+        <form action="<?= site_url('buku_fisik/import_cover') ?>" 
+              method="post" 
+              enctype="multipart/form-data">
+
+            <div class="row align-items-center">
+
+                <div class="col-md-5">
+                    <input type="file" 
+                           name="file_zip" 
+                           class="form-control" 
+                           accept=".zip" 
+                           required>
+                </div>
+
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-upload"></i> Upload Cover ZIP
+                    </button>
+                </div>
+
+                <div class="col-md-4 text-muted small">
+                    Format: <b>1.jpg, 2.jpg, dst (sesuai ID buku)</b>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+    <div class="alert alert-info mt-2">
+    Upload file ZIP berisi gambar cover dengan nama sesuai ID buku.<br>
+    Contoh: <code>1.jpg, 2.jpg, 3.png</code>
+</div>
+</div>
 
     <?php if ($this->session->flashdata('success')): ?>
         <div class="alert alert-success">

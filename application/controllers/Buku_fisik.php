@@ -340,4 +340,101 @@ public function import()
 
     redirect('buku_fisik');
 }
+public function import_cover()
+{
+    if (empty($_FILES['file_zip']['name'])) {
+        $this->session->set_flashdata('error', 'File ZIP wajib diupload');
+        redirect('buku_fisik');
+        return;
+    }
+
+    // ===== UPLOAD ZIP =====
+    $config['upload_path']   = './uploads/zip/';
+    $config['allowed_types'] = 'zip';
+    $config['encrypt_name']  = TRUE;
+
+    $this->load->library('upload', $config);
+
+    if (!$this->upload->do_upload('file_zip')) {
+        $this->session->set_flashdata('error', $this->upload->display_errors('', ''));
+        redirect('buku_fisik');
+        return;
+    }
+
+    $file = $this->upload->data();
+    $zip_path = $file['full_path'];
+
+    // ===== EXTRACT ZIP =====
+    $extract_path = './uploads/temp_cover/';
+    if (!is_dir($extract_path)) {
+        mkdir($extract_path, 0777, true);
+    }
+
+    $zip = new ZipArchive;
+    if ($zip->open($zip_path) === TRUE) {
+        $zip->extractTo($extract_path);
+        $zip->close();
+    } else {
+        $this->session->set_flashdata('error', 'Gagal extract ZIP');
+        redirect('buku_fisik');
+        return;
+    }
+
+    // ===== PROSES FILE =====
+    $files = scandir($extract_path);
+
+    $success = 0;
+    $failed  = 0;
+
+    foreach ($files as $file_name) {
+        if ($file_name == '.' || $file_name == '..') continue;
+
+        $ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+        $id_buku = pathinfo($file_name, PATHINFO_FILENAME);
+
+        // validasi ekstensi
+        if (!in_array($ext, ['jpg', 'jpeg', 'png'])) {
+            $failed++;
+            continue;
+        }
+
+        // cek buku ada
+        $buku = $this->Buku_fisik_model->get_by_id($id_buku);
+        if (!$buku) {
+            $failed++;
+            continue;
+        }
+
+        $source = $extract_path . $file_name;
+        $new_name = $id_buku . '.' . $ext;
+        $destination = './uploads/cover/' . $new_name;
+
+        // hapus cover lama jika ada
+        if (!empty($buku->cover) && file_exists('./uploads/cover/'.$buku->cover)) {
+            unlink('./uploads/cover/'.$buku->cover);
+        }
+
+        rename($source, $destination);
+
+        // update DB
+        $this->Buku_fisik_model->update($id_buku, [
+            'cover' => $new_name
+        ]);
+
+        $success++;
+    }
+
+    // hapus file zip
+    unlink($zip_path);
+
+    // bersihkan folder temp
+    array_map('unlink', glob($extract_path . "*"));
+
+    $this->session->set_flashdata(
+        'success',
+        "Upload cover selesai. Berhasil: {$success}, Gagal: {$failed}"
+    );
+
+    redirect('buku_fisik');
+}
 }
