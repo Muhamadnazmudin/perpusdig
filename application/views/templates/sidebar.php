@@ -226,57 +226,45 @@ $role = (int) $this->user['id_role']; // 1=admin, 2=guru, 3=siswa
 
 
     <!-- ================= SISWA dan Guru ================= -->
-    <?php if (in_array($role, [2,3], true)): ?>
+<?php if (in_array($role, [2,3], true)): ?>
 
-    <hr class="sidebar-divider">
-    <div class="sidebar-heading">Menu Siswa</div>
+<hr class="sidebar-divider">
+<div class="sidebar-heading">Menu Siswa</div>
 
-    <li class="nav-item">
-        <a class="nav-link" href="<?= site_url('profil') ?>">
-            <i class="fas fa-fw fa-user"></i>
-            <span>Profil</span>
-        </a>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link" href="<?= site_url('buku') ?>">
-            <i class="fas fa-fw fa-book-open"></i>
-            <span>Buku Perpus</span>
-        </a>
-    </li>
-
-    <!-- 🔥 E-BOOK SISWA -->
-    <li class="nav-item">
-        <a class="nav-link" href="<?= site_url('SiswaEbook') ?>">
-            <i class="fas fa-fw fa-tablet-alt"></i>
-            <span>E-Book</span>
-        </a>
-    </li>
-    <!-- 🔥      SISWA -->
+<!-- 👤 AKUN -->
 <li class="nav-item">
-    <a class="nav-link" href="<?= site_url('SiswaKarya') ?>">
-        <i class="fas fa-fw fa-pen-nib"></i>
-        <span>Karya Saya</span>
+    <a class="nav-link" href="<?= site_url('profil') ?>">
+        <i class="fas fa-fw fa-user-circle"></i>
+        <span>Akun Saya</span>
     </a>
 </li>
 
+<!-- 📚 BUKU -->
+<li class="nav-item">
+    <a class="nav-link" href="<?= site_url('buku') ?>">
+        <i class="fas fa-fw fa-book-open"></i>
+        <span>Buku Perpus</span>
+    </a>
+</li>
 
-    <li class="nav-item">
-        <a class="nav-link" href="<?= site_url('peminjaman/daftar') ?>">
-            <i class="fas fa-fw fa-book-reader"></i>
-            <span>Daftar Pinjaman</span>
-        </a>
-    </li>
+<!-- 📖 E-BOOK -->
+<li class="nav-item">
+    <a class="nav-link" href="<?= site_url('SiswaEbook') ?>">
+        <i class="fas fa-fw fa-tablet-alt"></i>
+        <span>E-Book</span>
+    </a>
+</li>
 
-    <li class="nav-item">
-        <a class="nav-link" href="<?= site_url('peminjaman/riwayat') ?>">
-            <i class="fas fa-fw fa-history"></i>
-            <span>Riwayat Pinjaman</span>
-        </a>
-    </li>
+<!-- 📕 PINJAMAN -->
+<li class="nav-item">
+    <a class="nav-link" href="<?= site_url('peminjaman/daftar') ?>">
+        <i class="fas fa-fw fa-book-reader"></i>
+        <span>Daftar Pinjaman</span>
+    </a>
+</li>
 
-    <?php endif; ?>
-    <!-- =============== END SISWA =============== -->
+<?php endif; ?>
+<!-- =============== END SISWA =============== -->
 
 
     <hr class="sidebar-divider">

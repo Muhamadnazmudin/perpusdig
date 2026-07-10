@@ -171,7 +171,45 @@ $foto = !empty($siswa->foto)
 
         </div>
     </div>
+<!-- ================= MENU AKUN ================= -->
+<div class="card shadow-sm mt-4">
+    <div class="card-header">
+        <strong>Menu Akun</strong>
+    </div>
 
+    <div class="list-group list-group-flush">
+
+        <a href="<?= site_url('SiswaKarya') ?>"
+           class="list-group-item list-group-item-action">
+            <i class="fas fa-pen-nib mr-2 text-primary"></i>
+            Karya Saya
+            <i class="fas fa-chevron-right float-right mt-1"></i>
+        </a>
+
+        <a href="<?= site_url('peminjaman/riwayat') ?>"
+           class="list-group-item list-group-item-action">
+            <i class="fas fa-history mr-2 text-success"></i>
+            Riwayat Pinjaman
+            <i class="fas fa-chevron-right float-right mt-1"></i>
+        </a>
+
+        <a href="<?= site_url('quran') ?>"
+           class="list-group-item list-group-item-action">
+            <i class="fas fa-book-reader mr-2 text-info"></i>
+            Baca Al-Qur'an
+            <i class="fas fa-chevron-right float-right mt-1"></i>
+        </a>
+
+        <a href="<?= site_url('auth/logout') ?>"
+           class="list-group-item list-group-item-action text-danger">
+            <i class="fas fa-sign-out-alt mr-2"></i>
+            Logout
+            <i class="fas fa-chevron-right float-right mt-1"></i>
+        </a>
+
+    </div>
+</div>
+<!-- ================= END MENU AKUN ================= -->
 </div>
 <script>
 const inputFoto = document.getElementById('foto');
